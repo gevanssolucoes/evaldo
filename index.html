@@ -136,8 +136,8 @@ html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--fon
 .auth-msg.success{background:#e8f5e9;color:#1b5e20;border:1px solid #c8e6c9;}
 
 /* ── APP ── */
-#app-screen {display:none;}
-#app-screen.visible{display:block;}
+#app-screen {display:block;}
+#auth-screen {display:none!important;}
 
 .app {
   display: grid;
@@ -406,7 +406,6 @@ select:focus,input:focus{outline:none;border-color:var(--accent);}
     <div class="user-info">
       <div class="user-avatar" id="sb-avatar">?</div>
       <div class="user-name" id="sb-nome">Carregando…</div>
-      <button class="btn-logout" onclick="fazerLogout()" title="Sair">⏻</button>
     </div>
     <nav>
       <div class="nav-section">Menu</div>
@@ -568,7 +567,6 @@ select:focus,input:focus{outline:none;border-color:var(--accent);}
             <button type="submit" class="btn-primary" id="btn-perfil" style="margin-top:12px;width:100%">💾 Salvar alterações</button>
           </form>
           <hr style="border:none;border-top:1px solid var(--border);margin:24px 0 18px;">
-          <button onclick="fazerLogout()" style="width:100%;padding:10px;background:none;border:1.5px solid var(--border);border-radius:8px;color:var(--fg2);font-family:var(--font-b);font-size:13px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='#e57373';this.style.color='#e57373'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--fg2)'">⏻ Sair da conta</button>
         </div>
       </div>
     </section>
@@ -630,63 +628,50 @@ async function fazerLogout() {
   await supa.auth.signOut();
 }
 
-// ─── AUTH STATE ──────────────────────────────────────────────────────
+// ─── INÍCIO SEM LOGIN ────────────────────────────────────────────────
 let usuarioAtual = null;
 
-supa.auth.onAuthStateChange(async (event, session) => {
-  if (session?.user) {
-    usuarioAtual = session.user;
-    await carregarPerfil(session.user);
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('app-screen').style.display = 'block';
-    if (!santoCarregado) carregarSanto();
-  } else {
-    usuarioAtual = null;
-    document.getElementById('auth-screen').style.display = 'flex';
-    document.getElementById('app-screen').style.display = 'none';
-  }
+// App abre direto sem autenticação
+document.addEventListener('DOMContentLoaded', () => {
+  carregarPerfilPublico();
+  if (!santoCarregado) carregarSanto();
 });
 
-// Verificar sessão existente ao carregar
-supa.auth.getSession().then(({ data: { session } }) => {
-  if (!session) {
-    document.getElementById('auth-screen').style.display = 'flex';
-  }
-});
-
-// ─── PERFIL ──────────────────────────────────────────────────────────
-async function carregarPerfil(user) {
-  const { data } = await supa.from('profiles').select('*').eq('id', user.id).single();
-  const nome = data?.nome || user.user_metadata?.nome || user.email.split('@')[0];
-  const inicial = nome.charAt(0).toUpperCase();
-
-  document.getElementById('sb-avatar').textContent = inicial;
-  document.getElementById('sb-nome').textContent = nome;
-  document.getElementById('perfil-avatar').textContent = inicial;
-  document.getElementById('perfil-email-label').textContent = user.email;
-  document.getElementById('perfil-nome').value = nome;
-  document.getElementById('perfil-paroquia').value = data?.paroquia || '';
-  document.getElementById('perfil-lembretes').checked = data?.lembretes !== false;
+// ─── PERFIL (sem login — salvo em localStorage) ──────────────────────
+function carregarPerfilPublico() {
+  try {
+    const dados = JSON.parse(localStorage.getItem('perfil_cat') || '{}');
+    const nome = dados.nome || 'Visitante';
+    const inicial = nome.charAt(0).toUpperCase();
+    document.getElementById('sb-avatar').textContent = inicial;
+    document.getElementById('sb-nome').textContent = nome;
+    const av = document.getElementById('perfil-avatar');
+    if (av) av.textContent = inicial;
+    const em = document.getElementById('perfil-email-label');
+    if (em) em.textContent = 'Acesso livre';
+    const pn = document.getElementById('perfil-nome');
+    if (pn) pn.value = dados.nome || '';
+    const pp = document.getElementById('perfil-paroquia');
+    if (pp) pp.value = dados.paroquia || '';
+    const pl = document.getElementById('perfil-lembretes');
+    if (pl) pl.checked = dados.lembretes !== false;
+  } catch(e) {}
 }
 
 async function salvarPerfil(e) {
   e.preventDefault();
   const btn = document.getElementById('btn-perfil');
   btn.disabled = true; btn.textContent = '⏳ Salvando…';
-
-  const dados = {
-    id: usuarioAtual.id,
-    nome: document.getElementById('perfil-nome').value.trim(),
-    paroquia: document.getElementById('perfil-paroquia').value.trim() || null,
-    lembretes: document.getElementById('perfil-lembretes').checked,
-  };
-
-  const { error } = await supa.from('profiles').upsert(dados);
-  if (error) mostrarToast('Erro ao salvar: ' + error.message, true);
-  else {
-    mostrarToast('✅ Perfil atualizado com sucesso!');
-    await carregarPerfil(usuarioAtual);
-  }
+  try {
+    const dados = {
+      nome: document.getElementById('perfil-nome').value.trim() || 'Visitante',
+      paroquia: document.getElementById('perfil-paroquia').value.trim() || '',
+      lembretes: document.getElementById('perfil-lembretes').checked,
+    };
+    localStorage.setItem('perfil_cat', JSON.stringify(dados));
+    carregarPerfilPublico();
+    mostrarToast('✅ Perfil salvo com sucesso!');
+  } catch(e) { mostrarToast('Erro ao salvar: ' + e.message, true); }
   btn.disabled = false; btn.textContent = '💾 Salvar alterações';
 }
 
