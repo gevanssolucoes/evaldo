@@ -300,12 +300,17 @@ select,input[type=text],input[type=email],input[type=number]{
 select:focus,input:focus{outline:none;border-color:var(--accent);}
 .btn-primary{padding:10px 22px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:var(--font-b);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;}
 .btn-primary:hover{background:var(--accent2)}.btn-primary:disabled{opacity:.5;cursor:not-allowed}
-.plano-result{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);max-width:680px;}
-.plano-result h3{font-family:var(--font-d);font-size:20px;font-weight:700;margin-bottom:14px;}
-.plano-result h4{font-size:14px;font-weight:600;color:var(--accent2);margin:18px 0 7px;}
-.plano-result p,.plano-result li{font-size:13px;line-height:1.7;color:var(--fg2);}
-.plano-result ul,.plano-result ol{padding-left:18px;margin:6px 0;}
+.plano-result{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;box-shadow:var(--shadow);max-width:720px;}
+.plano-result h1{font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--fg);margin-bottom:6px;line-height:1.3;}
+.plano-result h2{font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--accent);margin:22px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.plano-result h3{font-size:14px;font-weight:600;color:var(--accent2);margin:14px 0 5px;}
+.plano-result h4{font-size:13px;font-weight:600;color:var(--fg2);margin:10px 0 4px;}
+.plano-result p,.plano-result li{font-size:13.5px;line-height:1.75;color:var(--fg2);}
+.plano-result ul,.plano-result ol{padding-left:20px;margin:6px 0 10px;}
 .plano-result li{margin-bottom:5px;}
+.plano-result hr{border:none;border-top:1px solid var(--border);margin:20px 0;}
+.plano-result blockquote{border-left:3px solid var(--gold);padding:10px 16px;margin:14px 0;background:var(--bg2);border-radius:0 8px 8px 0;font-style:italic;color:var(--fg);font-size:13px;}
+.plano-result strong{color:var(--fg);font-weight:600;}
 
 /* ── PERFIL ── */
 .perfil-body{padding:28px 40px;flex:1;}
@@ -818,19 +823,167 @@ async function carregarSanto() {
 }
 
 // ─── CATEQUESE ───────────────────────────────────────────────────────
+// ─── BASE DE CONTEÚDO CATEQUÉTICO ─────────────────────────────────────
+const TEMAS_CAT = {
+  pecado: {
+    chaves: ['pecado','mortal','venial','capital','culpa','ofensa'],
+    titulo: 'O Pecado — Mortal, Venial e os Pecados Capitais',
+    objetivo: 'Compreender a natureza do pecado como ruptura com Deus, distinguir pecado mortal e venial, conhecer os sete pecados capitais e o caminho da conversão.',
+    cic: ['CIC §1849–1850 (definição de pecado)', 'CIC §1854–1864 (espécies de pecado)', 'CIC §1866 (pecados capitais)', 'CIC §1440–1442 (conversão e arrependimento)'],
+    biblia: ['Rm 3,23 — "Todos pecaram e estão privados da glória de Deus"', 'Is 1,18 — "Mesmo que os seus pecados sejam como a escarlate, ficarão brancos como a neve"', 'Lc 15,11-32 — Parábola do Filho Pródigo', '1Jo 1,8-9 — "Se dissermos que não temos pecado, enganamo-nos"'],
+    aulas: [
+      { titulo: 'O que é o Pecado?', ver: 'Partilha: "O que você sente quando faz algo errado?" — histórias do cotidiano sobre errar e magoar alguém.', julgar: 'Estudo do CIC §1849: pecado como ato, palavra ou desejo contrário à Lei de Deus. Leitura de Rm 3,23. Diferença entre erro humano e pecado (consciência e liberdade).', agir: 'Exame de consciência guiado. Oração de arrependimento sincero.', dinamica: 'Dinâmica do "nó": cada participante amarra um nó numa corda ao nomear uma situação de pecado; ao final, desamarram os nós orando — símbolo da libertação pelo perdão.' },
+      { titulo: 'Pecado Mortal e Pecado Venial', ver: 'Caso prático: compare situações do dia a dia (mentira branca vs. calúnia grave; furtar um doce vs. roubar) — qual a diferença de gravidade?', julgar: 'CIC §1857-1860: três condições do pecado mortal (matéria grave, plena consciência, deliberado consentimento). CIC §1862-1863: pecado venial e suas consequências. Leitura de 1Jo 1,8-9.', agir: 'Como retomar o caminho: exame de consciência diário, frequência aos sacramentos. Preparação para uma boa Confissão.', dinamica: 'Jogo de classificação: cartões com situações; grupos debatem se é pecado mortal, venial ou não é pecado — comparando depois com o CIC.' },
+      { titulo: 'Os Sete Pecados Capitais', ver: 'Roda de conversa: "Já se sentiu com inveja? Com preguiça de fazer o bem?" Identificar os pecados capitais no cotidiano e na mídia/redes sociais.', julgar: 'CIC §1866: soberba, avareza, inveja, ira, luxúria, gula, preguiça (acídia). Raízes dos outros pecados. Virtudes opostas: humildade, generosidade, benevolência, mansidão, castidade, temperança, diligência.', agir: 'Escolher uma virtude para cultivar nesta semana. Oração a São Miguel Arcanjo (proteção).', dinamica: 'Mapa mental em grupo: cada pecado capital → exemplos modernos → virtude contrária → frase bíblica.' },
+      { titulo: 'Conversão e Esperança', ver: 'Leitura dramática de Lc 15,11-32 (Filho Pródigo) — cada um representa um personagem. Reflexão: "Como o pai recebeu o filho?"', julgar: 'CIC §1440: a conversão como retorno ao Pai. O Sacramento da Reconciliação como encontro pessoal com Cristo misericordioso. O amor misericordioso de Deus que supera qualquer pecado (Is 1,18).', agir: 'Preparação e celebração do Sacramento da Reconciliação (se possível, convidar sacerdote). Propósito de emenda concreto.', dinamica: 'Carta ao Pai: cada catequizando escreve uma carta ao Pai Celestial como o filho pródigo, expressando arrependimento e gratidão — queimada em vela como símbolo de entrega a Deus.' }
+    ],
+    recursos: ['Catecismo da Igreja Católica (CIC §1849-1876)', 'Exame de consciência — Prelazia do Opus Dei', 'Documento "A Misericórdia de Deus" — CNBB', 'Hino: "Senhor, Tende Piedade de Nós"']
+  },
+  sacramentos: {
+    chaves: ['sacramento','batismo','crisma','eucaristia','confissão','reconciliação','unção','ordem','matrimônio','casamento'],
+    titulo: 'Os Sete Sacramentos da Igreja',
+    objetivo: 'Conhecer os sete sacramentos, compreendê-los como ações de Cristo na Igreja e perceber seu papel no itinerário cristão.',
+    cic: ['CIC §1113-1116 (definição de sacramento)', 'CIC §1210 (os sete sacramentos)', 'CIC §1322-1419 (Eucaristia)', 'CIC §1420-1498 (Penitência)'],
+    biblia: ['Mt 28,19 — "Batizai em nome do Pai, do Filho e do Espírito Santo"', 'Jo 6,53-54 — "Quem come a minha carne… tem a vida eterna"', 'Jo 20,22-23 — "Recebei o Espírito Santo. A quem perdoardes os pecados, serão perdoados"', 'Tg 5,14-15 — "Chamem os presbíteros da Igreja para ungir o doente"'],
+    aulas: [
+      { titulo: 'O que é um Sacramento?', ver: 'Mostrar objetos concretos: água, azeite, pão, vinho, véu de noiva, estola. Perguntar: "O que esses objetos têm em comum? Podem fazer algo especial?"', julgar: 'CIC §1131: o sacramento é sinal eficaz da graça instituído por Cristo. Os sete sacramentos e sua divisão em três grupos (iniciação, cura, serviço). Cristo age por meio dos sacramentos.', agir: 'Mapa dos sacramentos: marcar quais já recebeu, quais vai receber, quais vê sendo celebrados.', dinamica: 'Linha do tempo: em papel kraft, cada um traça sua linha da vida marcando os sacramentos recebidos e a experiência de cada um.' },
+      { titulo: 'Batismo e Crisma — Iniciação Cristã', ver: 'Trazer fotos de batisados (com autorização). "O que acontece no batismo? Você se lembra do seu? Alguém conhece a data?"', julgar: 'CIC §1213-1284: Batismo como novo nascimento pela água e Espírito. CIC §1285-1314: Crisma como selo do Espírito Santo e fortalecimento para a missão. Mt 28,19.', agir: 'Pesquisar data e padrinho(a) de batismo. Renovação das promessas batismais em grupo.', dinamica: 'Carta para o padrinho/madrinha: escrever agradecendo pelo acompanhamento na fé.' },
+      { titulo: 'Eucaristia — Centro da Vida Cristã', ver: 'Assistir trecho curto ou ouvir relato sobre uma Missa especial marcante. "O que você sente na Missa? O momento mais importante para você?"', julgar: 'CIC §1322-1327: Eucaristia como fonte e cume da vida cristã. A Última Ceia (Lc 22,19-20). Real presença de Cristo. Partes da Missa e seu significado.', agir: 'Participar da próxima Missa com atenção ao que está acontecendo em cada momento. Levar roteiro de participação ativa.', dinamica: 'Jogo das partes da Missa: cartas embaralhadas com as partes — reordenar corretamente em grupo.' },
+      { titulo: 'Sacramentos da Cura e do Serviço', ver: 'Testemunho (real ou lido) de alguém que recebeu a Unção dos Enfermos ou de um sacerdote/diácono sobre sua ordenação.', julgar: 'Penitência (CIC §1420): reconciliação com Deus. Unção dos Enfermos (CIC §1499): presença de Cristo no sofrimento. Ordem e Matrimônio como sacramentos a serviço da comunidade.', agir: 'Como posso me aproximar mais dos sacramentos em minha vida? Fazer uma lista de propósitos concretos.', dinamica: 'Teatro: pequenas cenas representando situações onde cada sacramento é celebrado — debater depois o sentido de cada um.' }
+    ],
+    recursos: ['CIC §1113-1666', 'Bíblia Ave Maria', 'CNBB: "Iniciação à Vida Cristã"', 'Vídeo: Os Sete Sacramentos — Diocese de Goiânia (YouTube)']
+  },
+  oracao: {
+    chaves: ['oração','rezar','orar','contemplação','liturgia das horas','rosário','terço'],
+    titulo: 'A Oração — Diálogo com Deus',
+    objetivo: 'Compreender a oração como relação pessoal com Deus, conhecer as formas de oração cristã e desenvolver hábito de vida orante.',
+    cic: ['CIC §2558-2565 (o que é oração)', 'CIC §2607-2615 (Jesus e a oração)', 'CIC §2650-2662 (fontes da oração)', 'CIC §2700-2724 (expressões da oração)'],
+    biblia: ['Lc 11,1-4 — O Pai Nosso', 'Mt 6,6 — "Fecha a porta e ora em secreto"', '1Ts 5,17 — "Orai sem cessar"', 'Lc 18,1-8 — Parábola da viúva persistente'],
+    aulas: [
+      { titulo: 'O que é Orar?', ver: 'Partilha: "Quando você ora? Como? Sente dificuldade?" Listar em grupo situações onde naturalmente buscamos Deus.', julgar: 'CIC §2559: oração como elevação da alma a Deus. As cinco formas de oração: adoração, petição, intercessão, ação de graças, louvor. Jesus orava (Mc 1,35).', agir: 'Escolher um momento fixo do dia para oração pessoal durante uma semana.', dinamica: 'Mural da oração: cada um escreve em papel colorido "Quando mais sinto necessidade de orar" — compartilhamento em grupo.' },
+      { titulo: 'O Pai Nosso — Escola de Oração', ver: 'Rezar o Pai Nosso devagar, frase por frase, parando em cada pedido.', julgar: 'CIC §2761-2776: o Pai Nosso como resumo do Evangelho. Análise de cada petição: santificação do nome, vinda do Reino, pão cotidiano (Eucaristia), perdão, libertação do mal.', agir: 'Rezar o Pai Nosso como oração meditada (lectio divina) durante a semana.', dinamica: 'Desenho orante: ilustrar cada pedido do Pai Nosso em um cartaz dividido em sete partes.' },
+      { titulo: 'O Rosário e a Oração Mariana', ver: 'Mostrar um terço. Quem já rezou? Com quem aprendeu? O que sente ao rezar o Rosário?', julgar: 'O Rosário como contemplação dos mistérios de Cristo com Maria. Os quatro grupos de mistérios. CIC §971: veneração a Maria na Igreja. A diferença entre adoração (só a Deus) e veneração (a Maria e aos santos).', agir: 'Rezar uma dezena do Rosário em grupo, contemplando um mistério.', dinamica: 'Criação de uma dezena personalizada: cada grupo escreve uma meditação breve para um mistério escolhido.' }
+    ],
+    recursos: ['CIC §2558-2865', 'Livreto: Rosário da Família — CNBB', 'App: iBreviary (Liturgia das Horas)', 'Livro: "A Escola de Oração" — Pe. Jacques Philippe']
+  },
+  trindade: {
+    chaves: ['trindade','pai','filho','espírito santo','deus','três pessoas'],
+    titulo: 'A Santíssima Trindade',
+    objetivo: 'Compreender o mistério central da fé cristã: um só Deus em três Pessoas — Pai, Filho e Espírito Santo.',
+    cic: ['CIC §232-267 (a Santíssima Trindade)', 'CIC §238-242 (o Pai)', 'CIC §441-445 (Jesus, Filho de Deus)', 'CIC §687-741 (o Espírito Santo)'],
+    biblia: ['Mt 28,19 — "Em nome do Pai, do Filho e do Espírito Santo"', 'Jo 1,1 — "No princípio era o Verbo"', 'Jo 14,16-17 — "Eu pedirei ao Pai e ele vos dará outro Paráclito"', '2Cor 13,13 — Bênção trinitária'],
+    aulas: [
+      { titulo: 'Um só Deus, três Pessoas', ver: 'Mostrar imagens históricas da arte cristã (Rublev, Masaccio, etc.) representando a Trindade. "O que chama atenção nestas imagens? Como os artistas tentam mostrar o que é impossível de ver?"', julgar: 'CIC §253: as três Pessoas são distintas, mas o Deus é um. Analogias (tênues): sol/luz/calor; amor/amante/amado. O mistério que supera a razão mas não a contradiz.', agir: 'Rezar o Gloria Patri como oração trinitária consciente. Aprender a fazer o sinal da Cruz com devoção.', dinamica: 'Galeria de imagens trinitárias: cada grupo apresenta uma obra de arte cristã sobre a Trindade e explica o que percebe nela.' },
+      { titulo: 'Deus Pai e Criador', ver: '"Qual a sua imagem de Deus Pai? Severo? Bondoso? Distante?" Partilha honesta.', julgar: 'CIC §238-242: Deus como Pai de misericórdia (2Cor 1,3). A paternidade de Deus transcende a paternidade humana. A criação como ato de amor gratuito.', agir: 'Carta ao Pai Deus: escrever sobre o que quer compartilhar com Ele nessa semana.', dinamica: 'Releitura de Lc 15,11-32 focando no comportamento do Pai — listar as atitudes do Pai e compará-las com a imagem que tínhamos.' }
+    ],
+    recursos: ['CIC §232-267', 'Ícone de Rublev (imagem)', 'Documento: "Deus é Amor" (Deus Caritas Est) — Bento XVI', 'Hino: "Glória ao Pai"']
+  },
+  maria: {
+    chaves: ['maria','nossa senhora','virgem','mãe de deus','imaculada','assunção','aparições','fátima','lourdes'],
+    titulo: 'Maria — Mãe de Deus e Nossa Mãe',
+    objetivo: 'Compreender o papel de Maria na história da salvação, conhecer os dogmas marianos e aprofundar a devoção filial à Mãe de Deus.',
+    cic: ['CIC §484-507 (Maria na economia da salvação)', 'CIC §963-975 (Maria, Mãe da Igreja)', 'CIC §971 (veneração a Maria)', 'CIC §2673-2679 (oração com Maria)'],
+    biblia: ['Lc 1,26-38 — Anunciação', 'Lc 1,46-55 — Magnificat', 'Jo 2,1-11 — Bodas de Caná', 'Jo 19,25-27 — Maria aos pés da Cruz'],
+    aulas: [
+      { titulo: 'Maria na Bíblia', ver: 'Listar aparições de Maria no NT. "O que mais chama atenção em Maria para você? O que ela diz, faz, como age?"', julgar: 'Lc 1,26-38: o "sim" de Maria (fiat). Lc 1,46-55: o Magnificat como oração de louvor. Jo 19,25-27: Maria como mãe de todos os discípulos. Maria, a primeira discípula.', agir: 'Memorizar o Magnificat ou uma parte dele. Rezar com as palavras de Maria.', dinamica: 'Dramatização da Anunciação — perguntar: "Se você fosse Maria, o que sentiria? O que responderia?"' },
+      { titulo: 'Os Dogmas Marianos', ver: '"Você já ouviu falar em dogma? O que acha que significa?" Desmistificar a palavra.', julgar: 'Os quatro dogmas: Maternidade Divina (CIC §495), Virgindade Perpétua (CIC §499), Imaculada Conceição (CIC §491), Assunção (CIC §966). Por que a Igreja os define? Como se relacionam com Cristo.', agir: 'Pesquisar uma das aparições marianas aprovadas (Fátima, Lourdes, Guadalupe) e compartilhar na próxima aula.', dinamica: 'Quiz dos dogmas marianos com cartões — equipes competem acertando definições e referências.' }
+    ],
+    recursos: ['CIC §484-511, 963-975', 'Encíclica: "Redemptoris Mater" — João Paulo II', 'Livreto: Aparições de Nossa Senhora — CNBB', 'Hino: "Ave Maria" (Schubert)']
+  },
+  eucaristia: {
+    chaves: ['eucaristia','missa','comunhão','corpo de cristo','última ceia','transubstanciação'],
+    titulo: 'A Eucaristia — Fonte e Cume da Vida Cristã',
+    objetivo: 'Aprofundar a compreensão da Eucaristia como presença real de Cristo, memorial do sacrifício pascal e alimento para a vida eterna.',
+    cic: ['CIC §1322-1327 (definição e nomes)', 'CIC §1333-1344 (a Última Ceia)', 'CIC §1373-1381 (presença real de Cristo)', 'CIC §1382-1398 (receber a comunhão)'],
+    biblia: ['Lc 22,19-20 — Instituição da Eucaristia', 'Jo 6,51-58 — Pão da Vida', '1Cor 11,23-26 — Tradição paulina', 'Lc 24,13-35 — Discípulos de Emaús'],
+    aulas: [
+      { titulo: 'A Última Ceia e a Eucaristia', ver: 'Contemplar uma imagem da Última Ceia (Leonardo da Vinci). "O que está acontecendo? O que Jesus sente? O que os apóstolos sentem?"', julgar: 'Lc 22,19-20: "Fazei isso em memória de mim." A Eucaristia como memorial (não mera recordação), sacrifício e banquete. CIC §1340: vínculo inseparável com a Páscoa.', agir: 'Preparar uma intenção especial para oferecer na próxima Missa.', dinamica: 'Releitura dos discípulos de Emaús (Lc 24): identificar as fases da Missa na cena — Liturgia da Palavra (explicação das Escrituras) e Liturgia Eucarística (partir o pão).' },
+      { titulo: 'Presença Real e Como Receber a Comunhão', ver: '"Você já sentiu algo especial ao receber a Comunhão? Você se prepara? Como?" Partilha respeitosa.', julgar: 'CIC §1374: Christ é real e substancialmente presente. Transubstanciação. CIC §1385-1387: condições para comungar bem — estado de graça, jejum eucarístico, devoção. Importância da Missa dominical.', agir: 'Roteiro de preparação para a Missa: o que fazer antes, durante e depois da Comunhão.', dinamica: 'Montar o "mapa da Missa": esquema visual com todas as partes e o que significam, para usar como guia nas próximas participações.' }
+    ],
+    recursos: ['CIC §1322-1419', 'Documento: "Ecclesia de Eucharistia" — João Paulo II', 'Livreto: A Santa Missa Passo a Passo — CNBB', 'Hino: "O Pão que Deus nos Dá"']
+  }
+};
+
+function detectarTema(temaInput) {
+  const t = temaInput.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  for (const [chave, dados] of Object.entries(TEMAS_CAT)) {
+    if (dados.chaves.some(k => t.includes(k.normalize('NFD').replace(/[̀-ͯ]/g,'')))) {
+      return dados;
+    }
+  }
+  return null;
+}
+
+function gerarAulasGenericas(tema, faixa, nAulas) {
+  const dinamicasPorFaixa = {
+    'crianças': ['Desenho e colorir', 'Música e gestos', 'Contação de história com fantoches', 'Jogo de memória bíblico'],
+    'pré-adolescentes': ['Quiz em equipes', 'Teatro relâmpago', 'Mural colaborativo', 'Caça ao versículo'],
+    'adolescentes': ['Debate e roda de conversa', 'Mapa mental', 'Análise de música/vídeo', 'Dinâmica de grupo'],
+    'adultos': ['Lectio Divina', 'Partilha testemunhal', 'Estudo do CIC', 'Círculo bíblico']
+  };
+  const faixaKey = Object.keys(dinamicasPorFaixa).find(k => faixa.includes(k)) || 'adolescentes';
+  const dinamicas = dinamicasPorFaixa[faixaKey];
+
+  return Array.from({length: nAulas}, (_, i) => ({
+    titulo: `${tema} — Parte ${i + 1}`,
+    ver: `Momento de partilha: experiências e conhecimentos prévios sobre "${tema}". O que já sei? O que quero aprender?`,
+    julgar: `Aprofundamento da fé: leitura e reflexão sobre "${tema}" à luz do Catecismo da Igreja Católica e da Sagrada Escritura. Referência: CIC §1 e seguintes conforme o tema.`,
+    agir: `Proposta concreta para a semana: como viver "${tema}" no cotidiano. Oração de encerramento.`,
+    dinamica: dinamicas[i % dinamicas.length] + ': atividade criativa relacionada ao tema da aula.'
+  }));
+}
+
+function montarPlanoMD(tema, faixa, nAulas, dadosTema) {
+  const titulo = dadosTema ? dadosTema.titulo : tema;
+  const objetivo = dadosTema ? dadosTema.objetivo : `Levar os catequizandos a compreender **${tema}** à luz do CIC e da Sagrada Escritura.`;
+  const aulas = dadosTema ? dadosTema.aulas.slice(0, nAulas) : gerarAulasGenericas(tema, faixa, nAulas);
+  // Se pediu mais aulas do que temos, completar com genéricas
+  while (aulas.length < nAulas) {
+    const extra = gerarAulasGenericas(tema, faixa, 1)[0];
+    extra.titulo = `${titulo} — Aprofundamento ${aulas.length + 1}`;
+    aulas.push(extra);
+  }
+  const cic = dadosTema ? dadosTema.cic : ['CIC §1 e seguintes (consultar conforme o tema)'];
+  const biblia = dadosTema ? dadosTema.biblia : [`Mt 28,19 — "Ide e ensinai a todas as nações"`];
+  const recursos = dadosTema ? dadosTema.recursos : ['Catecismo da Igreja Católica (CIC)', 'Bíblia Ave Maria', 'Catequese na Igreja de Hoje — CNBB'];
+
+  let md = `# Plano de Catequese: ${titulo}\n\n`;
+  md += `**Público:** ${faixa} &nbsp;·&nbsp; **${nAulas} aula(s)**\n\n---\n\n`;
+  md += `## 🎯 Objetivo Geral\n\n${objetivo}\n\n---\n\n`;
+  md += `## 📖 Referências Principais\n\n`;
+  md += `**Catecismo (CIC):**\n${cic.map(r => `- ${r}`).join('\n')}\n\n`;
+  md += `**Sagrada Escritura:**\n${biblia.map(r => `- ${r}`).join('\n')}\n\n---\n\n`;
+
+  aulas.forEach((aula, i) => {
+    md += `## Aula ${i + 1}: ${aula.titulo}\n\n`;
+    md += `### 👁️ VER — Abertura e Aproximação *(10 min)*\n${aula.ver}\n\n`;
+    md += `### ✝️ JULGAR — À Luz da Fé *(30 min)*\n${aula.julgar}\n\n`;
+    md += `### 🌱 AGIR — Compromisso e Missão *(10 min)*\n${aula.agir}\n\n`;
+    md += `> **💡 Dinâmica sugerida:** ${aula.dinamica}\n\n`;
+    if (i < aulas.length - 1) md += `---\n\n`;
+  });
+
+  md += `---\n\n## 📚 Recursos e Materiais\n${recursos.map(r => `- ${r}`).join('\n')}\n\n`;
+  md += `> *"Ide e ensinai a todas as nações, batizando-as em nome do Pai, do Filho e do Espírito Santo."* — Mt 28,19`;
+  return md;
+}
+
 async function gerarCatequese() {
-  const tema=document.getElementById('cat-tema').value.trim();
-  if(!tema){mostrarToast('Informe um tema.',true);return;}
-  const btn=document.getElementById('btn-cat');
-  btn.disabled=true;btn.textContent='⏳ Gerando…';
-  const div=document.getElementById('plano-resultado');
-  div.style.display='block';div.innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  const faixa=document.getElementById('cat-faixa').value;
-  const aulas=document.getElementById('cat-aulas').value;
-  await new Promise(r=>setTimeout(r,1000));
-  const plano=`## Plano de Catequese: ${tema}\n\n**Público:** ${faixa} · **${aulas} aula(s)**\n\n---\n\n### Objetivo Geral\nLevar os catequizandos a compreender **${tema}** à luz do CIC e da Sagrada Escritura.\n\n${Array.from({length:parseInt(aulas)},(_,i)=>`#### Aula ${i+1}\n\n**Abertura (10 min)** — Oração e acolhida.\n\n**Desenvolvimento (30 min)** — VER · JULGAR · AGIR.\n\n**Encerramento (10 min)** — Retomada e compromisso.`).join('\n\n---\n\n')}\n\n---\n\n### Recursos\n- Catecismo da Igreja Católica (CIC)\n- Bíblia Ave Maria\n- Catequese na Igreja de Hoje (CNBB)\n\n> *"Ide e ensinai a todas as nações"* (Mt 28,19)`;
-  div.innerHTML=`<div class="plano-result">${marked.parse?marked.parse(plano):plano}</div>`;
-  btn.disabled=false;btn.textContent='📋 Gerar Plano';
+  const tema = document.getElementById('cat-tema').value.trim();
+  if (!tema) { mostrarToast('Informe um tema.', true); return; }
+  const btn = document.getElementById('btn-cat');
+  btn.disabled = true; btn.textContent = '⏳ Gerando…';
+  const div = document.getElementById('plano-resultado');
+  div.style.display = 'block';
+  div.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const faixa = document.getElementById('cat-faixa').value;
+  const nAulas = parseInt(document.getElementById('cat-aulas').value) || 1;
+  await new Promise(r => setTimeout(r, 800));
+  const dadosTema = detectarTema(tema);
+  const planoMD = montarPlanoMD(tema, faixa, nAulas, dadosTema);
+  const html = (typeof marked !== 'undefined' && marked.parse) ? marked.parse(planoMD) : planoMD.replace(/\n/g, '<br>');
+  div.innerHTML = `<div class="plano-result">${html}</div>`;
+  btn.disabled = false; btn.textContent = '📋 Gerar Plano';
 }
 
 // ─── TOAST ───────────────────────────────────────────────────────────
