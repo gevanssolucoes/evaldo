@@ -54,12 +54,7 @@ html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--fon
 
 /* ── AUTH SCREEN ── */
 #auth-screen {
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: linear-gradient(135deg, #1a1410 0%, #2d1a10 50%, #1a1410 100%);
+  display: none !important;
 }
 .auth-box {
   background: var(--card);
@@ -631,8 +626,8 @@ async function fazerLogout() {
 // ─── INÍCIO SEM LOGIN ────────────────────────────────────────────────
 let usuarioAtual = null;
 
-// App abre direto sem autenticação
-document.addEventListener('DOMContentLoaded', () => {
+// App abre direto sem autenticação — sem esperar DOMContentLoaded
+window.addEventListener('load', () => {
   carregarPerfilPublico();
   if (!santoCarregado) carregarSanto();
 });
