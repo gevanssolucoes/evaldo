@@ -768,14 +768,49 @@ function adicionarTyping() {
 }
 function usarSugestao(el){document.getElementById('chat-input').value=el.textContent;enviarPergunta();}
 function gerarRespostaLocal(p) {
-  const q = p.toLowerCase();
-  if (q.includes('eucaristia')||q.includes('comunhão'))
+  const q = p.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+
+  if (q.includes('eucaristia')||q.includes('comunhao')||q.includes('comunhão'))
     return '**A Eucaristia** é o mais augusto dos sete sacramentos (CIC §1324). O pão e o vinho se convertem no Corpo e Sangue de Cristo — doutrina da **transubstanciação** (CIC §1376), definida pelo Concílio de Trento (1551). Para receber dignamente: estar em graça, guardar o jejum de 1 hora, ser batizado e crismado.';
-  if (q.includes('sacramentos'))
+
+  if (q.includes('sacramento'))
     return '**Os sete sacramentos** (CIC §1113):\n1. **Batismo** — porta de entrada\n2. **Confirmação** — robustece a graça\n3. **Eucaristia** — fonte e cume\n4. **Penitência** — reconciliação\n5. **Unção dos Enfermos** — graça na doença\n6. **Ordem** — ministros sagrados\n7. **Matrimônio** — aliança conjugal\n\nOs três primeiros formam os **Sacramentos de Iniciação**.';
+
   if (q.includes('trindade'))
     return '**A Santíssima Trindade** é o mistério central da fé cristã (CIC §234): um só Deus em três Pessoas — Pai, Filho e Espírito Santo — distintas e coiguais. O Concílio de Niceia (325) definiu o Filho como *consubstancial* ao Pai. *"Deus é amor"* (1 Jo 4,8).';
-  return 'Para respostas completas baseadas no CIC, CDC e Bíblia Ave Maria, configure o backend com a chave da API Anthropic. Pesquise também em [Vatican.va](https://www.vatican.va) e no site da CNBB.';
+
+  if (q.includes('pecado'))
+    return '**O pecado** é uma ofensa a Deus, uma falta contra a razão, a verdade e a consciência reta (CIC §1849). É "uma palavra, um ato ou um desejo contrários à lei eterna" (Santo Agostinho).\n\n**Tipos principais:**\n- **Pecado mortal**: destrói a caridade na alma; requer matéria grave, plena advertência e consentimento deliberado (CIC §1857)\n- **Pecado venial**: enfraquece a caridade mas não a rompe (CIC §1863)\n\n**Pecados capitais** (CIC §1866): soberba, avareza, inveja, ira, luxúria, gula, preguiça.\n\n*"Onde abundou o pecado, superabundou a graça"* (Rm 5,20). O perdão vem pelo Sacramento da Penitência (CIC §1440).';
+
+  if (q.includes('confissao')||q.includes('confissão')||q.includes('penitencia')||q.includes('penitência')||q.includes('reconciliacao'))
+    return '**O Sacramento da Penitência** (ou Reconciliação) é o meio ordinário pelo qual Deus perdoa os pecados cometidos após o Batismo (CIC §1446).\n\n**Atos do penitente:**\n1. **Contrição** — arrependimento sincero (CIC §1451)\n2. **Confissão** — acusação dos pecados ao sacerdote (CIC §1456)\n3. **Satisfação** — penitência imposta pelo confessor (CIC §1459)\n\nO sacerdote age *in persona Christi* ao pronunciar a absolvição. É obrigatório confessar pelo menos uma vez por ano os pecados graves (CIC §1457).';
+
+  if (q.includes('oracao')||q.includes('oração')||q.includes('rezar'))
+    return '**A oração** é a elevação da alma a Deus (CIC §2559). É um dom de Deus e resposta ao chamado divino.\n\n**Formas de oração** (CIC §2626-2643):\n- **Bênção e adoração** — reconhecer a grandeza de Deus\n- **Petição** — pedir a Deus o que necessitamos\n- **Intercessão** — orar pelos outros\n- **Ação de graças** — gratidão pelos dons recebidos\n- **Louvor** — glorificar Deus por si mesmo\n\n**O Pai-Nosso** é a oração por excelência, ensinada pelo próprio Jesus (Mt 6,9-13). Santa Teresa de Ávila ensinou que a oração é *"um trato de amizade com Aquele que sabemos nos ama"*.';
+
+  if (q.includes('maria')||q.includes('nossa senhora')||q.includes('virgem'))
+    return '**Maria Santíssima** é a Mãe de Deus (*Theotokos*), definido pelo Concílio de Éfeso (431). A Igreja professa quatro dogmas marianos:\n1. **Maternidade Divina** — Mãe de Deus (431)\n2. **Virgindade Perpétua** — antes, durante e após o parto (CIC §499)\n3. **Imaculada Conceição** — concebida sem pecado original (1854)\n4. **Assunção** — elevada ao céu em corpo e alma (1950)\n\nMaria é **medianeira, advogada e mãe** dos fiéis (CIC §969). O Rosário é a devoção mariana por excelência.';
+
+  if (q.includes('batismo'))
+    return '**O Batismo** é o primeiro e fundamental sacramento (CIC §1213), pelo qual nascemos de novo em Cristo. Remove o pecado original e todos os pecados pessoais, tornando o batizado filho de Deus e membro da Igreja.\n\nFórmula: *"Eu te batizo em nome do Pai, do Filho e do Espírito Santo"* (Mt 28,19). Pode ser conferido por imersão, infusão ou aspersão.\n\nO **Batismo de desejo** vale para quem o busca sinceramente mas não o recebeu (CIC §1258-1260).';
+
+  if (q.includes('casamento')||q.includes('matrimonio')||q.includes('matrimônio'))
+    return '**O Matrimônio** é uma aliança pela qual homem e mulher constituem uma comunhão de vida ordenada ao bem dos cônjuges e à geração dos filhos (CIC §1601).\n\n**Propriedades essenciais:** unidade e indissolubilidade (CIC §1056).\n\nO matrimônio é **sacramento** entre batizados e confere graça para viver o amor conjugal segundo o plano de Deus. Os próprios esposos são ministros do sacramento; o sacerdote é testemunha qualificada da Igreja.\n\nImpedimentos dirimentos (CDC §§1083-1094) tornam o matrimônio inválido se não dispensados.';
+
+  if (q.includes('ceu')||q.includes('céu')||q.includes('paraiso')||q.includes('paraíso')||q.includes('vida eterna'))
+    return '**O Céu** é a comunhão perfeita com Deus — *"ver a Deus face a face"* (CIC §1023), chamada visão beatífica. É o fim último do homem e a realização de seus anseios mais profundos.\n\nEntra no Céu quem morrer em graça e amizade com Deus (CIC §1023). Os que morrem em graça mas precisam de purificação passam pelo **Purgatório** (CIC §1030). Os que morrem em pecado mortal vão ao **Inferno** — separação eterna de Deus (CIC §1033).\n\n*"O que o olho não viu, o ouvido não ouviu e ao coração do homem não ocorreu, isso Deus preparou para os que o amam"* (1 Cor 2,9).';
+
+  if (q.includes('ressurreicao')||q.includes('ressurreição')||q.includes('pascoa')||q.includes('páscoa'))
+    return '**A Ressurreição de Cristo** é o fundamento da fé cristã (1 Cor 15,14). Jesus ressuscitou no terceiro dia (CIC §638), com corpo glorioso, vencendo definitivamente o pecado e a morte.\n\nA Ressurreição é:\n- **Fato histórico** — atestado por mais de 500 testemunhas (1 Cor 15,6)\n- **Mistério transcendente** — inaugurou nova era\n- **Fundamento da nossa esperança** — Cristo *"ressuscitou como primícias dos que morreram"* (1 Cor 15,20)\n\n**A Páscoa** é a festa mais importante do ano litúrgico — "festa das festas" (CIC §1169).';
+
+  if (q.includes('igreja')||q.includes('catolica')||q.includes('católica'))
+    return '**A Igreja Católica** foi fundada por Jesus Cristo sobre Pedro: *"Tu és Pedro, e sobre esta pedra edificarei minha Igreja"* (Mt 16,18). Suas quatro marcas (CIC §811):\n- **Una** — um só Senhor, uma fé, um batismo\n- **Santa** — santificada por Cristo\n- **Católica** — universal, para todos\n- **Apostólica** — fundada sobre os apóstolos\n\nO Papa, sucessor de Pedro, é o vigário de Cristo na terra e tem primado de jurisdição sobre toda a Igreja (CIC §882). O Colégio episcopal, em comunhão com o Papa, exerce o magistério.';
+
+  if (q.includes('biblia')||q.includes('bíblia')||q.includes('escritura')||q.includes('sagrada'))
+    return '**A Sagrada Escritura** é a Palavra de Deus consignada por escrito sob inspiração do Espírito Santo (CIC §105). Compõe-se de:\n- **Antigo Testamento**: 46 livros — história da salvação antes de Cristo\n- **Novo Testamento**: 27 livros — vida de Jesus e nascimento da Igreja\n\nA Igreja Católica reconhece **73 livros** canônicos (protestantes reconhecem 66, sem os deuterocanônicos). A Tradição e o Magistério interpretam autenticamente as Escrituras (CIC §85). *Dei Verbum* (Vaticano II) é o documento fundamental sobre a Revelação.';
+
+  // Resposta padrão para temas não mapeados — com orientação útil
+  return `Sua pergunta sobre **"${p}"** é muito boa! Com base no Catecismo da Igreja Católica (CIC) e no Código de Direito Canônico (CDC), posso orientar que busque este tema nos seguintes recursos:\n\n📖 **Catecismo online:** [catecismo.or.br](https://catecismo.or.br)\n🌐 **Vatican.va:** [vatican.va](https://www.vatican.va/archive/cathechism_po/index_new/prima-pagina-cic_po.html)\n📚 **CNBB:** [cnbb.org.br](https://www.cnbb.org.br)\n\nPosso responder temas como: **pecado, sacramentos, Eucaristia, Batismo, oração, Maria, Igreja, Bíblia, casamento, Ressurreição, Céu** e muito mais — experimente perguntar!`;
 }
 
 // ─── SANTO ───────────────────────────────────────────────────────────
