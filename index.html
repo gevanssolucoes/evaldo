@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Assistente Católico</title>
+</head>
+<body>
+
+<title>Assistente Católico</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+
+<style>:root{--bg:#faf8f5;--bg2:#f0ece4;--fg:#1a1714;--fg2:#6b6155;--fg3:#a09080;--accent:#8b3a2a;--accent2:#c0622f;--gold:#b8943f;--border:#ddd5c8;--card:#fff;--nav-bg:#1a1410;--nav-fg:#e8ddd0;--nav-active:#8b3a2a;--nav-hover:#2d241e;--shadow:0 2px 16px #00000014;--radius:12px;--font-d:"Playfair Display", Georgia, serif;--font-b:"Inter", system-ui, sans-serif;--lightningcss-light:initial;--lightningcss-dark: ;color-scheme:light}@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#120f0c;--bg2:#1e1814;--fg:#f0e8dc;--fg2:#b0a090;--fg3:#7a6a5a;--accent:#c0522a;--accent2:#e07040;--gold:#c9a84c;--border:#2e261e;--card:#1e1a16;--nav-bg:#0d0a08;--nav-fg:#c8bba8;--nav-active:#c0522a;--nav-hover:#1e1814;--shadow:0 2px 16px #0006;--lightningcss-light: ;--lightningcss-dark:initial;color-scheme:dark}}:root[data-theme=dark]{--bg:#120f0c;--bg2:#1e1814;--fg:#f0e8dc;--fg2:#b0a090;--fg3:#7a6a5a;--accent:#c0522a;--accent2:#e07040;--gold:#c9a84c;--border:#2e261e;--card:#1e1a16;--nav-bg:#0d0a08;--nav-fg:#c8bba8;--nav-active:#c0522a;--nav-hover:#1e1814;--shadow:0 2px 16px #0006;--lightningcss-light: ;--lightningcss-dark:initial;color-scheme:dark}*,:before,:after{box-sizing:border-box;margin:0;padding:0}html,body{background:var(--bg);height:100%;color:var(--fg);font-family:var(--font-b);font-size:15px;line-height:1.6}.auth-box{background:var(--card);border:1px solid var(--border);border-radius:18px;width:100%;max-width:420px;padding:40px 36px;box-shadow:0 24px 64px #00000059}.auth-logo{align-items:center;gap:12px;margin-bottom:28px;display:flex}.auth-cross{flex-shrink:0;width:38px;height:38px;position:relative}.auth-cross:before,.auth-cross:after{content:"";background:var(--gold);border-radius:2px;position:absolute}.auth-cross:before{width:6px;height:38px;top:0;left:16px}.auth-cross:after{width:26px;height:6px;top:12px;left:6px}.auth-logo h1{font-family:var(--font-d);color:var(--fg);font-size:18px;font-weight:700;line-height:1.2}.auth-logo span{color:var(--fg3);letter-spacing:.08em;margin-top:2px;font-size:11px;display:block}.auth-tabs{border-bottom:2px solid var(--border);gap:0;margin-bottom:24px;display:flex}.auth-tab{color:var(--fg3);font-family:var(--font-b);cursor:pointer;background:0 0;border:none;border-bottom:2px solid #0000;flex:1;margin-bottom:-2px;padding:10px;font-size:14px;font-weight:500;transition:all .15s}.auth-tab.active{color:var(--accent);border-bottom-color:var(--accent)}.auth-form{flex-direction:column;gap:14px;display:none}.auth-form.active{display:flex}.auth-form label{color:var(--fg2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;font-size:12px;font-weight:600;display:block}.auth-form input{border:1.5px solid var(--border);background:var(--bg);width:100%;color:var(--fg);font-family:var(--font-b);border-radius:9px;padding:11px 14px;font-size:14px;transition:border-color .15s}.auth-form input:focus{border-color:var(--accent);outline:none}.btn-auth{background:var(--accent);color:#fff;font-family:var(--font-b);cursor:pointer;letter-spacing:.01em;border:none;border-radius:9px;margin-top:4px;padding:13px;font-size:15px;font-weight:700;transition:background .15s}.btn-auth:hover{background:var(--accent2)}.btn-auth:disabled{opacity:.55;cursor:not-allowed}.auth-divider{text-align:center;color:var(--fg3);font-size:12px}.auth-msg{text-align:center;border-radius:8px;padding:10px 14px;font-size:13px}.auth-msg.error{color:#742a2a;background:#fde8e8;border:1px solid #f5c6c6}.auth-msg.success{color:#1b5e20;background:#e8f5e9;border:1px solid #c8e6c9}#app-screen{display:block}#auth-screen{display:none!important}.app{grid-template-columns:220px 1fr;height:100dvh;display:grid}.sidebar{background:var(--nav-bg);flex-direction:column;height:100dvh;display:flex;position:sticky;top:0;overflow-y:auto}.sidebar-logo{border-bottom:1px solid #ffffff0f;padding:24px 20px 18px}.sb-cross{align-items:center;gap:10px;display:flex}.sb-cross-icon{flex-shrink:0;width:30px;height:30px;position:relative}.sb-cross-icon:before,.sb-cross-icon:after{content:"";background:var(--gold);border-radius:2px;position:absolute}.sb-cross-icon:before{width:5px;height:30px;top:0;left:12px}.sb-cross-icon:after{width:20px;height:5px;top:9px;left:5px}.sb-cross h1{font-family:var(--font-d);color:var(--nav-fg);font-size:14px;font-weight:700;line-height:1.2}.sb-cross span{color:var(--fg3);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;font-size:10px;font-weight:300;display:block}nav{flex:1;padding:14px 0}.nav-section{text-transform:uppercase;letter-spacing:.12em;color:var(--fg3);padding:8px 16px 4px;font-size:10px;font-weight:600}.nav-btn{width:100%;color:var(--nav-fg);font-family:var(--font-b);cursor:pointer;text-align:left;opacity:.7;background:0 0;border:none;border-left:3px solid #0000;align-items:center;gap:10px;padding:10px 20px;font-size:13px;transition:all .15s;display:flex}.nav-btn:hover{background:var(--nav-hover);opacity:1}.nav-btn.active{background:var(--nav-hover);color:#fff;border-left-color:var(--nav-active);opacity:1;font-weight:500}.nav-icon{text-align:center;width:20px;font-size:15px}.sidebar-footer{color:var(--fg3);border-top:1px solid #ffffff0f;padding:14px 18px;font-size:11px;line-height:1.5}.user-info{border-bottom:1px solid #ffffff0f;align-items:center;gap:8px;padding:14px 18px;display:flex}.user-avatar{background:var(--accent);color:#fff;border-radius:50%;flex-shrink:0;justify-content:center;align-items:center;width:32px;height:32px;font-size:13px;font-weight:700;display:flex}.user-name{color:var(--nav-fg);white-space:nowrap;text-overflow:ellipsis;flex:1;min-width:0;font-size:12px;overflow:hidden}.btn-logout{color:var(--fg3);cursor:pointer;background:0 0;border:none;flex-shrink:0;padding:2px;font-size:16px;transition:color .15s}.btn-logout:hover{color:#e57373}.main{flex-direction:column;display:flex;overflow-y:auto}.panel{flex-direction:column;flex:1;display:none}.panel.active{display:flex}.inicio-hero{background:linear-gradient(135deg,var(--accent) 0%,#4a1a0e 100%);padding:44px 40px 36px;position:relative;overflow:hidden}.inicio-hero:before{content:"✝";opacity:.07;color:#fff;pointer-events:none;font-size:110px;position:absolute;top:50%;right:28px;transform:translateY(-50%)}.inicio-hero h2{font-family:var(--font-d);color:#fff;text-wrap:balance;max-width:460px;font-size:28px;font-weight:700;line-height:1.25}.inicio-hero p{color:#ffffffb8;max-width:400px;margin-top:8px;font-size:13px}.hero-badge{color:#ffffffe6;text-transform:uppercase;letter-spacing:.1em;background:#ffffff26;border-radius:20px;margin-bottom:12px;padding:4px 10px;font-size:11px;font-weight:600;display:inline-block}.inicio-body{flex:1;padding:28px 40px}.frase-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:24px;padding:26px;position:relative}.frase-card:before{content:"\"";font-family:var(--font-d);color:var(--gold);opacity:.2;pointer-events:none;font-size:72px;line-height:1;position:absolute;top:-8px;left:16px}.frase-num{text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:8px;font-size:11px;font-weight:600}.frase-txt{font-family:var(--font-d);color:var(--fg);font-size:17px;font-style:italic;line-height:1.55}.frase-nav{align-items:center;gap:10px;margin-top:14px;display:flex}.frase-nav button{background:var(--bg2);border:1px solid var(--border);color:var(--fg2);cursor:pointer;border-radius:8px;padding:6px 14px;font-size:12px;transition:all .15s}.frase-nav button:hover{background:var(--accent);color:#fff;border-color:var(--accent)}.frase-count{color:var(--fg3);font-size:12px}.inicio-grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-top:20px;display:grid}.inicio-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;box-shadow:var(--shadow);padding:18px;transition:all .18s}.inicio-card:hover{border-color:var(--accent);transform:translateY(-2px)}.inicio-card .ic{margin-bottom:8px;font-size:26px}.inicio-card h3{margin-bottom:3px;font-size:13px;font-weight:600}.inicio-card p{color:var(--fg2);font-size:11px}.chat-wrap{flex-direction:column;flex:1;height:100%;display:flex}.chat-header{border-bottom:1px solid var(--border);background:var(--card);padding:18px 30px 14px}.chat-header h2{font-family:var(--font-d);font-size:20px;font-weight:700}.chat-header p{color:var(--fg2);margin-top:2px;font-size:12px}.chat-msgs{flex-direction:column;flex:1;gap:14px;padding:20px 30px;display:flex;overflow-y:auto}.msg{gap:10px;max-width:680px;display:flex}.msg.user{flex-direction:row-reverse;align-self:flex-end}.msg-avatar{background:var(--bg2);border:1px solid var(--border);border-radius:50%;flex-shrink:0;justify-content:center;align-items:center;width:34px;height:34px;font-size:14px;display:flex}.msg.assistant .msg-avatar{background:var(--accent);color:#fff}.msg-bubble{background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);border-radius:14px;padding:12px 16px;font-size:14px;line-height:1.65}.msg.user .msg-bubble{background:var(--accent);color:#fff;border-color:#0000}.msg-bubble p{margin-bottom:6px}.msg-bubble p:last-child{margin-bottom:0}.msg-bubble ul,.msg-bubble ol{margin:6px 0;padding-left:18px}.msg-bubble li{margin-bottom:4px}.msg-bubble blockquote{border-left:3px solid var(--gold);color:var(--fg2);margin:8px 0;padding-left:12px;font-style:italic}.typing-indicator{align-items:center;gap:5px;padding:8px 12px;display:flex}.typing-dot{background:var(--fg3);border-radius:50%;width:7px;height:7px;animation:1.2s infinite typing}.typing-dot:nth-child(2){animation-delay:.2s}.typing-dot:nth-child(3){animation-delay:.4s}@keyframes typing{0%,60%,to{opacity:.3;transform:scale(1)}30%{opacity:1;transform:scale(1.2)}}.chat-input-area{border-top:1px solid var(--border);background:var(--card);padding:14px 30px 18px}.chat-hints{flex-wrap:wrap;gap:7px;margin-bottom:9px;display:flex}.hint-chip{border:1px solid var(--border);cursor:pointer;color:var(--fg2);background:var(--bg);border-radius:20px;padding:5px 11px;font-size:11px;transition:all .15s}.hint-chip:hover{background:var(--accent);color:#fff;border-color:var(--accent)}.chat-input-row{align-items:flex-end;gap:9px;max-width:720px;display:flex}.chat-input{border:1.5px solid var(--border);background:var(--bg);color:var(--fg);font-family:var(--font-b);resize:none;border-radius:10px;flex:1;min-height:42px;max-height:110px;padding:10px 14px;font-size:14px;line-height:1.5;transition:border-color .15s}.chat-input:focus{border-color:var(--accent);outline:none}.chat-send{background:var(--accent);color:#fff;font-family:var(--font-b);cursor:pointer;white-space:nowrap;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;transition:background .15s}.chat-send:hover{background:var(--accent2)}.chat-send:disabled{opacity:.5;cursor:not-allowed}.section-header{border-bottom:1px solid var(--border);background:var(--card);padding:20px 40px 0}.section-header h2{font-family:var(--font-d);font-size:20px;font-weight:700}.section-header p{color:var(--fg2);margin-top:2px;padding-bottom:14px;font-size:12px}.santo-body{flex:1;padding:28px 40px}.santo-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}.santo-top{background:linear-gradient(135deg,var(--gold) 0%,#8a6020 100%);color:#1a1000;padding:22px 26px}.santo-date{text-transform:uppercase;letter-spacing:.1em;opacity:.7;font-size:11px;font-weight:600}.santo-name{font-family:var(--font-d);margin-top:4px;font-size:26px;font-weight:700;line-height:1.2}.santo-sub{opacity:.8;margin-top:4px;font-size:13px}.santo-content{padding:22px 26px}.santo-sec h3{text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:7px;font-size:12px;font-weight:600}.santo-sec p{color:var(--fg2);margin-bottom:18px;font-size:13px;line-height:1.7}.oracao{background:var(--bg2);border:1px solid var(--border);border-left:4px solid var(--gold);font-family:var(--font-d);color:var(--fg);border-radius:8px;padding:14px 18px;font-size:14px;font-style:italic;line-height:1.7}.btn-refresh{background:var(--accent);color:#fff;font-family:var(--font-b);cursor:pointer;border:none;border-radius:8px;align-items:center;gap:7px;padding:9px 18px;font-size:13px;font-weight:600;transition:background .15s;display:inline-flex}.btn-refresh:hover{background:var(--accent2)}.cat-body{flex:1;padding:28px 40px}.form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);max-width:580px;margin-bottom:20px;padding:26px}.form-card h3{font-family:var(--font-d);margin-bottom:5px;font-size:19px;font-weight:700}.form-card>p{color:var(--fg2);margin-bottom:18px;font-size:12px}.form-row{margin-bottom:14px}label{color:var(--fg2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;font-size:12px;font-weight:600;display:block}select,input[type=text],input[type=email],input[type=number]{border:1.5px solid var(--border);background:var(--bg);width:100%;color:var(--fg);font-family:var(--font-b);-webkit-appearance:none;border-radius:8px;padding:10px 13px;font-size:14px;transition:border-color .15s}select:focus,input:focus{border-color:var(--accent);outline:none}.btn-primary{background:var(--accent);color:#fff;font-family:var(--font-b);cursor:pointer;border:none;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;transition:background .15s}.btn-primary:hover{background:var(--accent2)}.btn-primary:disabled{opacity:.5;cursor:not-allowed}.plano-result{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);max-width:720px;padding:28px 32px}.plano-result h1{font-family:var(--font-d);color:var(--fg);margin-bottom:6px;font-size:22px;font-weight:700;line-height:1.3}.plano-result h2{font-family:var(--font-d);color:var(--accent);border-bottom:1px solid var(--border);margin:22px 0 8px;padding-bottom:5px;font-size:17px;font-weight:700}.plano-result h3{color:var(--accent2);margin:14px 0 5px;font-size:14px;font-weight:600}.plano-result h4{color:var(--fg2);margin:10px 0 4px;font-size:13px;font-weight:600}.plano-result p,.plano-result li{color:var(--fg2);font-size:13.5px;line-height:1.75}.plano-result ul,.plano-result ol{margin:6px 0 10px;padding-left:20px}.plano-result li{margin-bottom:5px}.plano-result hr{border:none;border-top:1px solid var(--border);margin:20px 0}.plano-result blockquote{border-left:3px solid var(--gold);background:var(--bg2);color:var(--fg);border-radius:0 8px 8px 0;margin:14px 0;padding:10px 16px;font-size:13px;font-style:italic}.plano-result strong{color:var(--fg);font-weight:600}.plano-result table{border-collapse:collapse;width:100%;margin:12px 0 18px;font-size:13px}.plano-result table td{border:1px solid var(--border);padding:7px 12px}.plano-result table td:first-child{color:var(--fg2);background:var(--bg2);width:40%;font-weight:600}.perfil-body{flex:1;padding:28px 40px}.perfil-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);max-width:480px;padding:30px}.perfil-card h2{font-family:var(--font-d);margin-bottom:5px;font-size:22px;font-weight:700}.perfil-card>p{color:var(--fg2);margin-bottom:22px;font-size:12px}.perfil-avatar-big{background:var(--accent);color:#fff;border-radius:50%;justify-content:center;align-items:center;width:64px;height:64px;margin-bottom:20px;font-size:24px;font-weight:700;display:flex}.form-checkbox{cursor:pointer;align-items:center;gap:9px;margin-top:4px;font-size:14px;display:flex}.form-checkbox input{cursor:pointer;width:15px;height:15px;accent-color:var(--accent)}.toast{color:#fff;opacity:0;z-index:9999;background:#22543d;border-radius:10px;padding:13px 18px;font-size:13px;font-weight:500;transition:all .3s;position:fixed;bottom:24px;right:24px;transform:translateY(80px);box-shadow:0 4px 20px #00000040}.toast.show{opacity:1;transform:translateY(0)}.toast.error{background:#742a2a}.mobile-tabbar{background:var(--nav-bg);padding-bottom:env(safe-area-inset-bottom,0px);z-index:100;border-top:1px solid #ffffff14;display:none;position:fixed;bottom:0;left:0;right:0}.mobile-tabs{display:flex}.mobile-tab{color:var(--fg3);cursor:pointer;background:0 0;border:none;flex-direction:column;flex:1;align-items:center;gap:3px;padding:10px 4px;font-size:10px;transition:color .15s;display:flex}.mobile-tab .icon{font-size:19px}.mobile-tab.active{color:var(--nav-active)}.loading{justify-content:center;align-items:center;padding:48px;display:flex}.spinner{border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;width:34px;height:34px;animation:.8s linear infinite spin}@keyframes spin{to{transform:rotate(360deg)}}@media (width<=680px){.app{grid-template-columns:1fr}.sidebar{display:none}.mobile-tabbar{display:block}.main{padding-bottom:65px}.inicio-hero{padding:28px 16px 24px}.inicio-hero:before{display:none}.inicio-hero h2{font-size:22px}.inicio-body,.santo-body,.cat-body,.perfil-body{padding:18px 14px}.chat-msgs{padding:14px}.chat-input-area{padding:10px 14px 14px}.section-header{padding:14px 14px 0}.inicio-grid{grid-template-columns:1fr 1fr}.auth-box{padding:28px 20px}}</style>
+
+<!-- ══ AUTH SCREEN ══════════════════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-cross"></div>
+      <div>
+        <h1>Assistente Católico</h1>
+        <span>Catecismo · Bíblia · Direito</span>
+      </div>
+    </div>
+
+    <!-- MAGIC LINK -->
+    <form id="form-login" class="auth-form active" onsubmit="fazerLogin(event)">
+      <p style="font-size:14px;color:var(--fg2);margin-bottom:12px;text-align:center;">Digite seu e-mail e enviaremos um link de acesso.</p>
+      <div>
+        <label>E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com" required autocomplete="email">
+      </div>
+      <div id="login-msg" style="display:none" class="auth-msg"></div>
+      <button type="submit" class="btn-auth" id="btn-login">Enviar link de acesso →</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══ APP SCREEN ════════════════════════════════════════════════════ -->
+<div id="app-screen">
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sb-cross">
+        <div class="sb-cross-icon"></div>
+        <div>
+          <h1>Assistente Católico</h1>
+          <span>Catecismo · Bíblia · Direito</span>
+        </div>
+      </div>
+    </div>
+    <div class="user-info">
+      <div class="user-avatar" id="sb-avatar">?</div>
+      <div class="user-name" id="sb-nome">Carregando…</div>
+    </div>
+    <nav>
+      <div class="nav-section">Menu</div>
+      <button class="nav-btn active" onclick="showPanel('inicio',this)"><span class="nav-icon">🏛️</span> Início</button>
+      <button class="nav-btn" onclick="showPanel('perguntas',this)"><span class="nav-icon">💬</span> Perguntas</button>
+      <button class="nav-btn" onclick="showPanel('santo',this)"><span class="nav-icon">✨</span> Santo do Dia</button>
+      <button class="nav-btn" onclick="showPanel('catequese',this)"><span class="nav-icon">📖</span> Catequese</button>
+      <button class="nav-btn" onclick="showPanel('perfil',this)"><span class="nav-icon">👤</span> Meu Perfil</button>
+    </nav>
+    <div class="sidebar-footer">Baseado no CIC, CDC<br>e Bíblia Ave Maria</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- INÍCIO -->
+    <section id="panel-inicio" class="panel active">
+      <div class="inicio-hero">
+        <div class="hero-badge">São Josemaría Escrivá</div>
+        <h2>Caminho — Frases para a vida cristã</h2>
+        <p>Reflexões do fundador do Opus Dei para fortalecer sua fé no cotidiano.</p>
+      </div>
+      <div class="inicio-body">
+        <div class="frase-card">
+          <div class="frase-num" id="frase-num">Ponto 1</div>
+          <div class="frase-txt" id="frase-txt">Não deixe que a sua vida seja estéril. Seja útil. Deixe rastro. Ilumine, com a chama da sua fé e do seu amor, os caminhos que você percorreu.</div>
+          <div class="frase-nav">
+            <button onclick="fraseAnterior()">← Anterior</button>
+            <span class="frase-count" id="frase-count">1 / 12</span>
+            <button onclick="frasePróxima()">Próxima →</button>
+          </div>
+        </div>
+        <h3 style="font-family:var(--font-d);font-size:16px;font-weight:700;margin-bottom:12px;">Explore o Assistente</h3>
+        <div class="inicio-grid">
+          <div class="inicio-card" onclick="showPanel('perguntas',null)">
+            <div class="ic">💬</div><h3>Perguntas</h3><p>Dúvidas sobre fé e doutrina</p>
+          </div>
+          <div class="inicio-card" onclick="showPanel('santo',null)">
+            <div class="ic">🕊️</div><h3>Santo do Dia</h3><p>Conheça o santo de hoje</p>
+          </div>
+          <div class="inicio-card" onclick="showPanel('catequese',null)">
+            <div class="ic">📖</div><h3>Catequese</h3><p>Gere roteiros personalizados</p>
+          </div>
+          <div class="inicio-card" onclick="showPanel('perfil',null)">
+            <div class="ic">👤</div><h3>Meu Perfil</h3><p>Edite seus dados</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PERGUNTAS -->
+    <section id="panel-perguntas" class="panel">
+      <div class="chat-wrap">
+        <div class="chat-header">
+          <h2>Perguntas sobre a Fé</h2>
+          <p>Baseado no CIC, Código de Direito Canônico e Bíblia Ave Maria</p>
+        </div>
+        <div class="chat-msgs" id="chat-msgs">
+          <div class="msg assistant">
+            <div class="msg-avatar">✝</div>
+            <div class="msg-bubble">
+              <strong>Bem-vindo ao Assistente Católico!</strong><br><br>
+              Faça sua pergunta sobre doutrina, sacramentos, moral ou vida espiritual.
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="chat-hints">
+            <span class="hint-chip" onclick="usarSugestao(this)">O que é a Eucaristia?</span>
+            <span class="hint-chip" onclick="usarSugestao(this)">Quais são os sacramentos?</span>
+            <span class="hint-chip" onclick="usarSugestao(this)">O que diz o CIC sobre o casamento?</span>
+            <span class="hint-chip" onclick="usarSugestao(this)">Explique a Santíssima Trindade</span>
+          </div>
+          <div class="chat-input-row">
+            <textarea class="chat-input" id="chat-input" rows="1" placeholder="Faça sua pergunta…"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarPergunta()}"
+              oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+            <button class="chat-send" id="btn-send" onclick="enviarPergunta()">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SANTO -->
+    <section id="panel-santo" class="panel">
+      <div class="section-header"><h2>Santo do Dia</h2><p>Conheça o santo que a Igreja celebra hoje</p></div>
+      <div class="santo-body">
+        <div id="santo-loading" class="loading"><div class="spinner"></div></div>
+        <div id="santo-content" style="display:none">
+          <div class="santo-card">
+            <div class="santo-top">
+              <div class="santo-date" id="santo-data"></div>
+              <div class="santo-name" id="santo-nome"></div>
+              <div class="santo-sub" id="santo-sub"></div>
+            </div>
+            <div class="santo-content">
+              <div class="santo-sec"><h3>Vida e Testemunho</h3><p id="santo-vida"></p></div>
+              <div class="santo-sec"><h3>Oração</h3><div class="oracao" id="santo-oracao"></div></div>
+            </div>
+          </div>
+          <button class="btn-refresh" onclick="carregarSanto()">↻ Atualizar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATEQUESE -->
+    <section id="panel-catequese" class="panel">
+      <div class="section-header"><h2>Plano de Catequese</h2><p>Gere roteiros personalizados</p></div>
+      <div class="cat-body">
+        <div class="form-card">
+          <h3>Gerar Plano</h3>
+          <p>Preencha para criar um plano completo</p>
+          <div class="form-row">
+            <label>Tema / Tópico</label>
+            <input type="text" id="cat-tema" placeholder="Ex: Os Sacramentos, A Trindade…">
+          </div>
+          <div class="form-row">
+            <label>Faixa etária</label>
+            <select id="cat-faixa">
+              <option value="crianças (6-9 anos)">Crianças (6–9 anos)</option>
+              <option value="pré-adolescentes (10-12 anos)">Pré-adolescentes (10–12 anos)</option>
+              <option value="adolescentes (13-17 anos)" selected>Adolescentes (13–17 anos)</option>
+              <option value="adultos">Adultos</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Número de aulas</label>
+            <input type="number" id="cat-aulas" value="4" min="1" max="12">
+          </div>
+          <button class="btn-primary" id="btn-cat" onclick="gerarCatequese()">📋 Gerar Plano</button>
+        </div>
+        <div id="plano-resultado" style="display:none"></div>
+      </div>
+    </section>
+
+    <!-- PERFIL -->
+    <section id="panel-perfil" class="panel">
+      <div class="section-header"><h2>Meu Perfil</h2><p>Edite seus dados e preferências</p></div>
+      <div class="perfil-body">
+        <div class="perfil-card">
+          <div class="perfil-avatar-big" id="perfil-avatar">?</div>
+          <h2>Minha Conta</h2>
+          <p id="perfil-email-label" style="margin-bottom:22px;"></p>
+          <form onsubmit="salvarPerfil(event)">
+            <div class="form-row">
+              <label>Nome completo</label>
+              <input type="text" id="perfil-nome" placeholder="Seu nome">
+            </div>
+            <div class="form-row">
+              <label>Paróquia (opcional)</label>
+              <input type="text" id="perfil-paroquia" placeholder="Nome da sua paróquia">
+            </div>
+            <div class="form-row">
+              <label class="form-checkbox">
+                <input type="checkbox" id="perfil-lembretes" checked>
+                Receber lembretes espirituais
+              </label>
+            </div>
+            <button type="submit" class="btn-primary" id="btn-perfil" style="margin-top:12px;width:100%">💾 Salvar alterações</button>
+          </form>
+          <hr style="border:none;border-top:1px solid var(--border);margin:24px 0 18px;">
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MOBILE TABBAR -->
+<div class="mobile-tabbar">
+  <div class="mobile-tabs">
+    <button class="mobile-tab active" onclick="showPanel('inicio',null)"><span class="icon">🏛️</span><span>Início</span></button>
+    <button class="mobile-tab" onclick="showPanel('perguntas',null)"><span class="icon">💬</span><span>Chat</span></button>
+    <button class="mobile-tab" onclick="showPanel('santo',null)"><span class="icon">✨</span><span>Santo</span></button>
+    <button class="mobile-tab" onclick="showPanel('catequese',null)"><span class="icon">📖</span><span>Catequese</span></button>
+    <button class="mobile-tab" onclick="showPanel('perfil',null)"><span class="icon">👤</span><span>Perfil</span></button>
+  </div>
+</div>
+</div><!-- /app-screen -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── SUPABASE ────────────────────────────────────────────────────────
+const { createClient } = supabase;
+const supa = createClient(
+  'https://jqqojiuwkuyvjctsehbw.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxcW9qaXV3a3V5dmpjdHNlaGJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMDM5MTEsImV4cCI6MjEwNjg3OTkxMX0.eAliULbqIPo_LIUj_9ct_iEZHPQd9KRhDUKRbz5CJ0A'
+);
+
+// ─── AUTH TABS ───────────────────────────────────────────────────────
+// ─── LOGIN (MAGIC LINK) ──────────────────────────────────────────────
+async function fazerLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btn-login');
+  const msg = document.getElementById('login-msg');
+  btn.disabled = true; btn.textContent = '⏳ Enviando…';
+  msg.style.display = 'none';
+
+  const email = document.getElementById('login-email').value.trim();
+  const { error } = await supa.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: 'https://gevanssolucoes.github.io/evaldo/' }
+  });
+
+  msg.style.display = 'block';
+  if (error) {
+    msg.className = 'auth-msg error';
+    msg.textContent = error.message;
+    btn.disabled = false; btn.textContent = 'Enviar link de acesso →';
+  } else {
+    msg.className = 'auth-msg success';
+    msg.textContent = '✅ Link enviado! Verifique seu e-mail e clique no link para entrar.';
+    btn.textContent = 'Link enviado!';
+  }
+}
+
+// ─── LOGOUT ──────────────────────────────────────────────────────────
+async function fazerLogout() {
+  await supa.auth.signOut();
+}
+
+// ─── INÍCIO SEM LOGIN ────────────────────────────────────────────────
+let usuarioAtual = null;
+
+// App abre direto sem autenticação — sem esperar DOMContentLoaded
+window.addEventListener('load', () => {
+  carregarPerfilPublico();
+  if (!santoCarregado) carregarSanto();
+});
+
+// ─── PERFIL (sem login — salvo em localStorage) ──────────────────────
+function carregarPerfilPublico() {
+  try {
+    const dados = JSON.parse(localStorage.getItem('perfil_cat') || '{}');
+    const nome = dados.nome || 'Visitante';
+    const inicial = nome.charAt(0).toUpperCase();
+    document.getElementById('sb-avatar').textContent = inicial;
+    document.getElementById('sb-nome').textContent = nome;
+    const av = document.getElementById('perfil-avatar');
+    if (av) av.textContent = inicial;
+    const em = document.getElementById('perfil-email-label');
+    if (em) em.textContent = 'Acesso livre';
+    const pn = document.getElementById('perfil-nome');
+    if (pn) pn.value = dados.nome || '';
+    const pp = document.getElementById('perfil-paroquia');
+    if (pp) pp.value = dados.paroquia || '';
+    const pl = document.getElementById('perfil-lembretes');
+    if (pl) pl.checked = dados.lembretes !== false;
+  } catch(e) {}
+}
+
+async function salvarPerfil(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btn-perfil');
+  btn.disabled = true; btn.textContent = '⏳ Salvando…';
+  try {
+    const dados = {
+      nome: document.getElementById('perfil-nome').value.trim() || 'Visitante',
+      paroquia: document.getElementById('perfil-paroquia').value.trim() || '',
+      lembretes: document.getElementById('perfil-lembretes').checked,
+    };
+    localStorage.setItem('perfil_cat', JSON.stringify(dados));
+    carregarPerfilPublico();
+    mostrarToast('✅ Perfil salvo com sucesso!');
+  } catch(e) { mostrarToast('Erro ao salvar: ' + e.message, true); }
+  btn.disabled = false; btn.textContent = '💾 Salvar alterações';
+}
+
+// ─── NAVEGAÇÃO ───────────────────────────────────────────────────────
+let santoCarregado = false;
+
+function showPanel(nome, btnEl) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+nome).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  else {
+    const idx = ['inicio','perguntas','santo','catequese','perfil'].indexOf(nome);
+    document.querySelectorAll('.nav-btn')[idx]?.classList.add('active');
+  }
+  document.querySelectorAll('.mobile-tab').forEach(b => b.classList.remove('active'));
+  const idx2 = ['inicio','perguntas','santo','catequese','perfil'].indexOf(nome);
+  document.querySelectorAll('.mobile-tab')[idx2]?.classList.add('active');
+  if (nome==='santo' && !santoCarregado) carregarSanto();
+}
+
+// ─── FRASES ──────────────────────────────────────────────────────────
+const frases = [
+  {num:1,  txt:'Não deixe que a sua vida seja estéril. Seja útil. Deixe rastro. Ilumine, com a chama da sua fé e do seu amor, os caminhos que você percorreu.'},
+  {num:2,  txt:'Não te inquietes. Não te preocupes. O que te falta em oração, completa com humildade.'},
+  {num:58, txt:'Confiar: assim, com essa aparente irresponsabilidade de uma criança, devia ser a tua oração. Pede, pede muito, com insistência. Deus é Pai!'},
+  {num:111,txt:'A oração é a arma mais eficaz contra nossos inimigos: a carne, o demônio e o mundo.'},
+  {num:149,txt:'Não digas: "Esse homem me irrita!" Pensa: "Esse homem me santifica."'},
+  {num:204,txt:'Convicção: a preguiça é mãe de todos os vícios. E, para nós os cristãos, é ainda pior: é grande pecado, pois tornamo-nos inúteis ao amor.'},
+  {num:302,txt:'Os fracassos — o próprio, o alheio — não devem perturbar-te. Deus permite as quedas para que humildemente reconheças a tua fraqueza, e te faça maior em graça.'},
+  {num:418,txt:'Sede santos na rua, no escritório, na oficina, no campo, na universidade. Sede santos sendo ordinários, no cumprimento do dever de cada dia.'},
+  {num:540,txt:'Quando sentes o peso do cansaço, descobre no horizonte do teu trabalho a meta sobrenatural: o amor de Deus e a felicidade eterna.'},
+  {num:703,txt:'Nossa Mãe do Céu há de dar-te o amor de Deus que tanto necessitas para cumprir a tua missão.'},
+  {num:999,txt:'Quando a tentação te pressionar com força, pensa: o que faz o Senhor comigo? Está me provando... e torna a ti com amor mais puro.'},
+  {num:472,txt:'Seja leal: se determinado caminho te fez mal, não o imponhas aos outros.'},
+];
+let fraseIdx = 0;
+function renderFrase() {
+  const f = frases[fraseIdx];
+  document.getElementById('frase-num').textContent = 'Ponto '+f.num;
+  document.getElementById('frase-txt').textContent = f.txt;
+  document.getElementById('frase-count').textContent = (fraseIdx+1)+' / '+frases.length;
+}
+function frasePróxima(){fraseIdx=(fraseIdx+1)%frases.length;renderFrase();}
+function fraseAnterior(){fraseIdx=(fraseIdx-1+frases.length)%frases.length;renderFrase();}
+renderFrase();
+
+// ─── CHAT ────────────────────────────────────────────────────────────
+async function enviarPergunta() {
+  const input = document.getElementById('chat-input');
+  const texto = input.value.trim();
+  if (!texto) return;
+  adicionarMsg('user', texto);
+  input.value = ''; input.style.height = 'auto';
+  document.getElementById('btn-send').disabled = true;
+  const typing = adicionarTyping();
+  await new Promise(r => setTimeout(r, 1400));
+  typing.remove();
+  adicionarMsg('assistant', gerarRespostaLocal(texto));
+  // log
+  try { await supa.from('perguntas_log').insert({pergunta:texto,resposta:'simulada'}); } catch(e){}
+  document.getElementById('btn-send').disabled = false;
+}
+function adicionarMsg(role, texto) {
+  const msgs = document.getElementById('chat-msgs');
+  const div = document.createElement('div');
+  div.className = 'msg '+role;
+  div.innerHTML = `<div class="msg-avatar">${role==='assistant'?'✝':'👤'}</div><div class="msg-bubble">${marked.parse?marked.parse(texto):texto}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function adicionarTyping() {
+  const msgs = document.getElementById('chat-msgs');
+  const div = document.createElement('div');
+  div.className = 'msg assistant';
+  div.innerHTML = `<div class="msg-avatar">✝</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+function usarSugestao(el){document.getElementById('chat-input').value=el.textContent;enviarPergunta();}
+function gerarRespostaLocal(p) {
+  const q = p.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+
+  if (q.includes('eucaristia')||q.includes('comunhao')||q.includes('comunhão'))
+    return '**A Eucaristia** é o mais augusto dos sete sacramentos (CIC §1324). O pão e o vinho se convertem no Corpo e Sangue de Cristo — doutrina da **transubstanciação** (CIC §1376), definida pelo Concílio de Trento (1551). Para receber dignamente: estar em graça, guardar o jejum de 1 hora, ser batizado e crismado.';
+
+  if (q.includes('sacramento'))
+    return '**Os sete sacramentos** (CIC §1113):\n1. **Batismo** — porta de entrada\n2. **Confirmação** — robustece a graça\n3. **Eucaristia** — fonte e cume\n4. **Penitência** — reconciliação\n5. **Unção dos Enfermos** — graça na doença\n6. **Ordem** — ministros sagrados\n7. **Matrimônio** — aliança conjugal\n\nOs três primeiros formam os **Sacramentos de Iniciação**.';
+
+  if (q.includes('trindade'))
+    return '**A Santíssima Trindade** é o mistério central da fé cristã (CIC §234): um só Deus em três Pessoas — Pai, Filho e Espírito Santo — distintas e coiguais. O Concílio de Niceia (325) definiu o Filho como *consubstancial* ao Pai. *"Deus é amor"* (1 Jo 4,8).';
+
+  if (q.includes('pecado'))
+    return '**O pecado** é uma ofensa a Deus, uma falta contra a razão, a verdade e a consciência reta (CIC §1849). É "uma palavra, um ato ou um desejo contrários à lei eterna" (Santo Agostinho).\n\n**Tipos principais:**\n- **Pecado mortal**: destrói a caridade na alma; requer matéria grave, plena advertência e consentimento deliberado (CIC §1857)\n- **Pecado venial**: enfraquece a caridade mas não a rompe (CIC §1863)\n\n**Pecados capitais** (CIC §1866): soberba, avareza, inveja, ira, luxúria, gula, preguiça.\n\n*"Onde abundou o pecado, superabundou a graça"* (Rm 5,20). O perdão vem pelo Sacramento da Penitência (CIC §1440).';
+
+  if (q.includes('confissao')||q.includes('confissão')||q.includes('penitencia')||q.includes('penitência')||q.includes('reconciliacao'))
+    return '**O Sacramento da Penitência** (ou Reconciliação) é o meio ordinário pelo qual Deus perdoa os pecados cometidos após o Batismo (CIC §1446).\n\n**Atos do penitente:**\n1. **Contrição** — arrependimento sincero (CIC §1451)\n2. **Confissão** — acusação dos pecados ao sacerdote (CIC §1456)\n3. **Satisfação** — penitência imposta pelo confessor (CIC §1459)\n\nO sacerdote age *in persona Christi* ao pronunciar a absolvição. É obrigatório confessar pelo menos uma vez por ano os pecados graves (CIC §1457).';
+
+  if (q.includes('oracao')||q.includes('oração')||q.includes('rezar'))
+    return '**A oração** é a elevação da alma a Deus (CIC §2559). É um dom de Deus e resposta ao chamado divino.\n\n**Formas de oração** (CIC §2626-2643):\n- **Bênção e adoração** — reconhecer a grandeza de Deus\n- **Petição** — pedir a Deus o que necessitamos\n- **Intercessão** — orar pelos outros\n- **Ação de graças** — gratidão pelos dons recebidos\n- **Louvor** — glorificar Deus por si mesmo\n\n**O Pai-Nosso** é a oração por excelência, ensinada pelo próprio Jesus (Mt 6,9-13). Santa Teresa de Ávila ensinou que a oração é *"um trato de amizade com Aquele que sabemos nos ama"*.';
+
+  if (q.includes('maria')||q.includes('nossa senhora')||q.includes('virgem'))
+    return '**Maria Santíssima** é a Mãe de Deus (*Theotokos*), definido pelo Concílio de Éfeso (431). A Igreja professa quatro dogmas marianos:\n1. **Maternidade Divina** — Mãe de Deus (431)\n2. **Virgindade Perpétua** — antes, durante e após o parto (CIC §499)\n3. **Imaculada Conceição** — concebida sem pecado original (1854)\n4. **Assunção** — elevada ao céu em corpo e alma (1950)\n\nMaria é **medianeira, advogada e mãe** dos fiéis (CIC §969). O Rosário é a devoção mariana por excelência.';
+
+  if (q.includes('batismo'))
+    return '**O Batismo** é o primeiro e fundamental sacramento (CIC §1213), pelo qual nascemos de novo em Cristo. Remove o pecado original e todos os pecados pessoais, tornando o batizado filho de Deus e membro da Igreja.\n\nFórmula: *"Eu te batizo em nome do Pai, do Filho e do Espírito Santo"* (Mt 28,19). Pode ser conferido por imersão, infusão ou aspersão.\n\nO **Batismo de desejo** vale para quem o busca sinceramente mas não o recebeu (CIC §1258-1260).';
+
+  if (q.includes('casamento')||q.includes('matrimonio')||q.includes('matrimônio'))
+    return '**O Matrimônio** é uma aliança pela qual homem e mulher constituem uma comunhão de vida ordenada ao bem dos cônjuges e à geração dos filhos (CIC §1601).\n\n**Propriedades essenciais:** unidade e indissolubilidade (CIC §1056).\n\nO matrimônio é **sacramento** entre batizados e confere graça para viver o amor conjugal segundo o plano de Deus. Os próprios esposos são ministros do sacramento; o sacerdote é testemunha qualificada da Igreja.\n\nImpedimentos dirimentos (CDC §§1083-1094) tornam o matrimônio inválido se não dispensados.';
+
+  if (q.includes('ceu')||q.includes('céu')||q.includes('paraiso')||q.includes('paraíso')||q.includes('vida eterna'))
+    return '**O Céu** é a comunhão perfeita com Deus — *"ver a Deus face a face"* (CIC §1023), chamada visão beatífica. É o fim último do homem e a realização de seus anseios mais profundos.\n\nEntra no Céu quem morrer em graça e amizade com Deus (CIC §1023). Os que morrem em graça mas precisam de purificação passam pelo **Purgatório** (CIC §1030). Os que morrem em pecado mortal vão ao **Inferno** — separação eterna de Deus (CIC §1033).\n\n*"O que o olho não viu, o ouvido não ouviu e ao coração do homem não ocorreu, isso Deus preparou para os que o amam"* (1 Cor 2,9).';
+
+  if (q.includes('ressurreicao')||q.includes('ressurreição')||q.includes('pascoa')||q.includes('páscoa'))
+    return '**A Ressurreição de Cristo** é o fundamento da fé cristã (1 Cor 15,14). Jesus ressuscitou no terceiro dia (CIC §638), com corpo glorioso, vencendo definitivamente o pecado e a morte.\n\nA Ressurreição é:\n- **Fato histórico** — atestado por mais de 500 testemunhas (1 Cor 15,6)\n- **Mistério transcendente** — inaugurou nova era\n- **Fundamento da nossa esperança** — Cristo *"ressuscitou como primícias dos que morreram"* (1 Cor 15,20)\n\n**A Páscoa** é a festa mais importante do ano litúrgico — "festa das festas" (CIC §1169).';
+
+  if (q.includes('igreja')||q.includes('catolica')||q.includes('católica'))
+    return '**A Igreja Católica** foi fundada por Jesus Cristo sobre Pedro: *"Tu és Pedro, e sobre esta pedra edificarei minha Igreja"* (Mt 16,18). Suas quatro marcas (CIC §811):\n- **Una** — um só Senhor, uma fé, um batismo\n- **Santa** — santificada por Cristo\n- **Católica** — universal, para todos\n- **Apostólica** — fundada sobre os apóstolos\n\nO Papa, sucessor de Pedro, é o vigário de Cristo na terra e tem primado de jurisdição sobre toda a Igreja (CIC §882). O Colégio episcopal, em comunhão com o Papa, exerce o magistério.';
+
+  if (q.includes('biblia')||q.includes('bíblia')||q.includes('escritura')||q.includes('sagrada'))
+    return '**A Sagrada Escritura** é a Palavra de Deus consignada por escrito sob inspiração do Espírito Santo (CIC §105). Compõe-se de:\n- **Antigo Testamento**: 46 livros — história da salvação antes de Cristo\n- **Novo Testamento**: 27 livros — vida de Jesus e nascimento da Igreja\n\nA Igreja Católica reconhece **73 livros** canônicos (protestantes reconhecem 66, sem os deuterocanônicos). A Tradição e o Magistério interpretam autenticamente as Escrituras (CIC §85). *Dei Verbum* (Vaticano II) é o documento fundamental sobre a Revelação.';
+
+  // Resposta padrão para temas não mapeados — com orientação útil
+  return `Sua pergunta sobre **"${p}"** é muito boa! Com base no Catecismo da Igreja Católica (CIC) e no Código de Direito Canônico (CDC), posso orientar que busque este tema nos seguintes recursos:\n\n📖 **Catecismo online:** [catecismo.or.br](https://catecismo.or.br)\n🌐 **Vatican.va:** [vatican.va](https://www.vatican.va/archive/cathechism_po/index_new/prima-pagina-cic_po.html)\n📚 **CNBB:** [cnbb.org.br](https://www.cnbb.org.br)\n\nPosso responder temas como: **pecado, sacramentos, Eucaristia, Batismo, oração, Maria, Igreja, Bíblia, casamento, Ressurreição, Céu** e muito mais — experimente perguntar!`;
+}
+
+// ─── SANTO ───────────────────────────────────────────────────────────
+const santos = [
+  {nome:'São Francisco de Assis',sub:'Fundador Franciscano · 4 de outubro',vida:'Francisco Bernardone (1181–1226) nasceu em Assis, abraçou a pobreza radical e fundou a Ordem dos Frades Menores (1209). Recebeu os estigmas em 1224. Seu "Cântico das Criaturas" é o texto mais antigo em italiano.',oracao:'Senhor, fazei-me instrumento da vossa paz. Onde houver ódio, que eu leve o amor; onde houver ofensa, que eu leve o perdão. Amém.'},
+  {nome:'Nossa Senhora de Fátima',sub:'Aparições de 1917 · 13 de maio',vida:'Entre maio e outubro de 1917, Nossa Senhora apareceu seis vezes em Fátima. Pediu oração, penitência e o Rosário diário. O milagre do sol foi testemunhado por 70.000 pessoas.',oracao:'Ó minha Jesus, perdoai-nos, livrai-nos do fogo do inferno. Levai as almas para o céu, especialmente as mais necessitadas da vossa misericórdia. Amém.'},
+  {nome:'Santo Tomás de Aquino',sub:'Doutor da Igreja · 28 de janeiro',vida:'Tomás de Aquino (1225–1274), dominicano, autor da Summa Theologiae — síntese de teologia e filosofia aristotélica. Canonizado em 1323.',oracao:'Criador de todas as coisas, dai-me uma mente que vos possa conhecer, um coração que vos ame. Amém.'},
+  {nome:'Santa Teresa do Menino Jesus',sub:'Doutora da Igreja · 1º de outubro',vida:'Thérèse Martin (1873–1897) descobriu o "Pequeno Caminho" da infância espiritual. Sua autobiografia "História de uma Alma" é um dos livros mais lidos do século XX.',oracao:'Ó Santa Teresa, que nunca te cansastes de invocar o Senhor, intercedei por nós. Amém.'},
+];
+async function carregarSanto() {
+  document.getElementById('santo-loading').style.display='flex';
+  document.getElementById('santo-content').style.display='none';
+  await new Promise(r=>setTimeout(r,700));
+  const s = santos[new Date().getDate()%santos.length];
+  const meses=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const d = new Date();
+  document.getElementById('santo-data').textContent=`${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+  document.getElementById('santo-nome').textContent=s.nome;
+  document.getElementById('santo-sub').textContent=s.sub;
+  document.getElementById('santo-vida').textContent=s.vida;
+  document.getElementById('santo-oracao').textContent=s.oracao;
+  document.getElementById('santo-loading').style.display='none';
+  document.getElementById('santo-content').style.display='block';
+  santoCarregado=true;
+}
+
+// ─── CATEQUESE ───────────────────────────────────────────────────────
+// ─── BASE DE CONTEÚDO CATEQUÉTICO ─────────────────────────────────────
+const TEMAS_CAT = {
+  pecado: {
+    chaves: ['pecado','mortal','venial','capital','culpa','ofensa'],
+    titulo: 'O Pecado — Mortal, Venial e os Pecados Capitais',
+    objetivo: 'Compreender a natureza do pecado como ruptura com Deus, distinguir pecado mortal e venial, conhecer os sete pecados capitais e o caminho da conversão.',
+    cic: ['CIC §1849–1850 (definição de pecado)', 'CIC §1854–1864 (espécies de pecado)', 'CIC §1866 (pecados capitais)', 'CIC §1440–1442 (conversão e arrependimento)'],
+    biblia: ['Rm 3,23 — "Todos pecaram e estão privados da glória de Deus"', 'Is 1,18 — "Mesmo que os seus pecados sejam como a escarlate, ficarão brancos como a neve"', 'Lc 15,11-32 — Parábola do Filho Pródigo', '1Jo 1,8-9 — "Se dissermos que não temos pecado, enganamo-nos"'],
+    aulas: [
+      { titulo: 'O que é o Pecado?', ver: 'Partilha: "O que você sente quando faz algo errado?" — histórias do cotidiano sobre errar e magoar alguém.', julgar: 'Estudo do CIC §1849: pecado como ato, palavra ou desejo contrário à Lei de Deus. Leitura de Rm 3,23. Diferença entre erro humano e pecado (consciência e liberdade).', agir: 'Exame de consciência guiado. Oração de arrependimento sincero.', dinamica: 'Dinâmica do "nó": cada participante amarra um nó numa corda ao nomear uma situação de pecado; ao final, desamarram os nós orando — símbolo da libertação pelo perdão.' },
+      { titulo: 'Pecado Mortal e Pecado Venial', ver: 'Caso prático: compare situações do dia a dia (mentira branca vs. calúnia grave; furtar um doce vs. roubar) — qual a diferença de gravidade?', julgar: 'CIC §1857-1860: três condições do pecado mortal (matéria grave, plena consciência, deliberado consentimento). CIC §1862-1863: pecado venial e suas consequências. Leitura de 1Jo 1,8-9.', agir: 'Como retomar o caminho: exame de consciência diário, frequência aos sacramentos. Preparação para uma boa Confissão.', dinamica: 'Jogo de classificação: cartões com situações; grupos debatem se é pecado mortal, venial ou não é pecado — comparando depois com o CIC.' },
+      { titulo: 'Os Sete Pecados Capitais', ver: 'Roda de conversa: "Já se sentiu com inveja? Com preguiça de fazer o bem?" Identificar os pecados capitais no cotidiano e na mídia/redes sociais.', julgar: 'CIC §1866: soberba, avareza, inveja, ira, luxúria, gula, preguiça (acídia). Raízes dos outros pecados. Virtudes opostas: humildade, generosidade, benevolência, mansidão, castidade, temperança, diligência.', agir: 'Escolher uma virtude para cultivar nesta semana. Oração a São Miguel Arcanjo (proteção).', dinamica: 'Mapa mental em grupo: cada pecado capital → exemplos modernos → virtude contrária → frase bíblica.' },
+      { titulo: 'Conversão e Esperança', ver: 'Leitura dramática de Lc 15,11-32 (Filho Pródigo) — cada um representa um personagem. Reflexão: "Como o pai recebeu o filho?"', julgar: 'CIC §1440: a conversão como retorno ao Pai. O Sacramento da Reconciliação como encontro pessoal com Cristo misericordioso. O amor misericordioso de Deus que supera qualquer pecado (Is 1,18).', agir: 'Preparação e celebração do Sacramento da Reconciliação (se possível, convidar sacerdote). Propósito de emenda concreto.', dinamica: 'Carta ao Pai: cada catequizando escreve uma carta ao Pai Celestial como o filho pródigo, expressando arrependimento e gratidão — queimada em vela como símbolo de entrega a Deus.' }
+    ],
+    recursos: ['Catecismo da Igreja Católica (CIC §1849-1876)', 'Exame de consciência — Prelazia do Opus Dei', 'Documento "A Misericórdia de Deus" — CNBB', 'Hino: "Senhor, Tende Piedade de Nós"']
+  },
+  sacramentos: {
+    chaves: ['sacramento','batismo','crisma','eucaristia','confissão','reconciliação','unção','ordem','matrimônio','casamento'],
+    titulo: 'Os Sete Sacramentos da Igreja',
+    objetivo: 'Conhecer os sete sacramentos, compreendê-los como ações de Cristo na Igreja e perceber seu papel no itinerário cristão.',
+    cic: ['CIC §1113-1116 (definição de sacramento)', 'CIC §1210 (os sete sacramentos)', 'CIC §1322-1419 (Eucaristia)', 'CIC §1420-1498 (Penitência)'],
+    biblia: ['Mt 28,19 — "Batizai em nome do Pai, do Filho e do Espírito Santo"', 'Jo 6,53-54 — "Quem come a minha carne… tem a vida eterna"', 'Jo 20,22-23 — "Recebei o Espírito Santo. A quem perdoardes os pecados, serão perdoados"', 'Tg 5,14-15 — "Chamem os presbíteros da Igreja para ungir o doente"'],
+    aulas: [
+      { titulo: 'O que é um Sacramento?', ver: 'Mostrar objetos concretos: água, azeite, pão, vinho, véu de noiva, estola. Perguntar: "O que esses objetos têm em comum? Podem fazer algo especial?"', julgar: 'CIC §1131: o sacramento é sinal eficaz da graça instituído por Cristo. Os sete sacramentos e sua divisão em três grupos (iniciação, cura, serviço). Cristo age por meio dos sacramentos.', agir: 'Mapa dos sacramentos: marcar quais já recebeu, quais vai receber, quais vê sendo celebrados.', dinamica: 'Linha do tempo: em papel kraft, cada um traça sua linha da vida marcando os sacramentos recebidos e a experiência de cada um.' },
+      { titulo: 'Batismo e Crisma — Iniciação Cristã', ver: 'Trazer fotos de batisados (com autorização). "O que acontece no batismo? Você se lembra do seu? Alguém conhece a data?"', julgar: 'CIC §1213-1284: Batismo como novo nascimento pela água e Espírito. CIC §1285-1314: Crisma como selo do Espírito Santo e fortalecimento para a missão. Mt 28,19.', agir: 'Pesquisar data e padrinho(a) de batismo. Renovação das promessas batismais em grupo.', dinamica: 'Carta para o padrinho/madrinha: escrever agradecendo pelo acompanhamento na fé.' },
+      { titulo: 'Eucaristia — Centro da Vida Cristã', ver: 'Assistir trecho curto ou ouvir relato sobre uma Missa especial marcante. "O que você sente na Missa? O momento mais importante para você?"', julgar: 'CIC §1322-1327: Eucaristia como fonte e cume da vida cristã. A Última Ceia (Lc 22,19-20). Real presença de Cristo. Partes da Missa e seu significado.', agir: 'Participar da próxima Missa com atenção ao que está acontecendo em cada momento. Levar roteiro de participação ativa.', dinamica: 'Jogo das partes da Missa: cartas embaralhadas com as partes — reordenar corretamente em grupo.' },
+      { titulo: 'Sacramentos da Cura e do Serviço', ver: 'Testemunho (real ou lido) de alguém que recebeu a Unção dos Enfermos ou de um sacerdote/diácono sobre sua ordenação.', julgar: 'Penitência (CIC §1420): reconciliação com Deus. Unção dos Enfermos (CIC §1499): presença de Cristo no sofrimento. Ordem e Matrimônio como sacramentos a serviço da comunidade.', agir: 'Como posso me aproximar mais dos sacramentos em minha vida? Fazer uma lista de propósitos concretos.', dinamica: 'Teatro: pequenas cenas representando situações onde cada sacramento é celebrado — debater depois o sentido de cada um.' }
+    ],
+    recursos: ['CIC §1113-1666', 'Bíblia Ave Maria', 'CNBB: "Iniciação à Vida Cristã"', 'Vídeo: Os Sete Sacramentos — Diocese de Goiânia (YouTube)']
+  },
+  oracao: {
+    chaves: ['oração','rezar','orar','contemplação','liturgia das horas','rosário','terço'],
+    titulo: 'A Oração — Diálogo com Deus',
+    objetivo: 'Compreender a oração como relação pessoal com Deus, conhecer as formas de oração cristã e desenvolver hábito de vida orante.',
+    cic: ['CIC §2558-2565 (o que é oração)', 'CIC §2607-2615 (Jesus e a oração)', 'CIC §2650-2662 (fontes da oração)', 'CIC §2700-2724 (expressões da oração)'],
+    biblia: ['Lc 11,1-4 — O Pai Nosso', 'Mt 6,6 — "Fecha a porta e ora em secreto"', '1Ts 5,17 — "Orai sem cessar"', 'Lc 18,1-8 — Parábola da viúva persistente'],
+    aulas: [
+      { titulo: 'O que é Orar?', ver: 'Partilha: "Quando você ora? Como? Sente dificuldade?" Listar em grupo situações onde naturalmente buscamos Deus.', julgar: 'CIC §2559: oração como elevação da alma a Deus. As cinco formas de oração: adoração, petição, intercessão, ação de graças, louvor. Jesus orava (Mc 1,35).', agir: 'Escolher um momento fixo do dia para oração pessoal durante uma semana.', dinamica: 'Mural da oração: cada um escreve em papel colorido "Quando mais sinto necessidade de orar" — compartilhamento em grupo.' },
+      { titulo: 'O Pai Nosso — Escola de Oração', ver: 'Rezar o Pai Nosso devagar, frase por frase, parando em cada pedido.', julgar: 'CIC §2761-2776: o Pai Nosso como resumo do Evangelho. Análise de cada petição: santificação do nome, vinda do Reino, pão cotidiano (Eucaristia), perdão, libertação do mal.', agir: 'Rezar o Pai Nosso como oração meditada (lectio divina) durante a semana.', dinamica: 'Desenho orante: ilustrar cada pedido do Pai Nosso em um cartaz dividido em sete partes.' },
+      { titulo: 'O Rosário e a Oração Mariana', ver: 'Mostrar um terço. Quem já rezou? Com quem aprendeu? O que sente ao rezar o Rosário?', julgar: 'O Rosário como contemplação dos mistérios de Cristo com Maria. Os quatro grupos de mistérios. CIC §971: veneração a Maria na Igreja. A diferença entre adoração (só a Deus) e veneração (a Maria e aos santos).', agir: 'Rezar uma dezena do Rosário em grupo, contemplando um mistério.', dinamica: 'Criação de uma dezena personalizada: cada grupo escreve uma meditação breve para um mistério escolhido.' }
+    ],
+    recursos: ['CIC §2558-2865', 'Livreto: Rosário da Família — CNBB', 'App: iBreviary (Liturgia das Horas)', 'Livro: "A Escola de Oração" — Pe. Jacques Philippe']
+  },
+  trindade: {
+    chaves: ['trindade','pai','filho','espírito santo','deus','três pessoas'],
+    titulo: 'A Santíssima Trindade',
+    objetivo: 'Compreender o mistério central da fé cristã: um só Deus em três Pessoas — Pai, Filho e Espírito Santo.',
+    cic: ['CIC §232-267 (a Santíssima Trindade)', 'CIC §238-242 (o Pai)', 'CIC §441-445 (Jesus, Filho de Deus)', 'CIC §687-741 (o Espírito Santo)'],
+    biblia: ['Mt 28,19 — "Em nome do Pai, do Filho e do Espírito Santo"', 'Jo 1,1 — "No princípio era o Verbo"', 'Jo 14,16-17 — "Eu pedirei ao Pai e ele vos dará outro Paráclito"', '2Cor 13,13 — Bênção trinitária'],
+    aulas: [
+      { titulo: 'Um só Deus, três Pessoas', ver: 'Mostrar imagens históricas da arte cristã (Rublev, Masaccio, etc.) representando a Trindade. "O que chama atenção nestas imagens? Como os artistas tentam mostrar o que é impossível de ver?"', julgar: 'CIC §253: as três Pessoas são distintas, mas o Deus é um. Analogias (tênues): sol/luz/calor; amor/amante/amado. O mistério que supera a razão mas não a contradiz.', agir: 'Rezar o Gloria Patri como oração trinitária consciente. Aprender a fazer o sinal da Cruz com devoção.', dinamica: 'Galeria de imagens trinitárias: cada grupo apresenta uma obra de arte cristã sobre a Trindade e explica o que percebe nela.' },
+      { titulo: 'Deus Pai e Criador', ver: '"Qual a sua imagem de Deus Pai? Severo? Bondoso? Distante?" Partilha honesta.', julgar: 'CIC §238-242: Deus como Pai de misericórdia (2Cor 1,3). A paternidade de Deus transcende a paternidade humana. A criação como ato de amor gratuito.', agir: 'Carta ao Pai Deus: escrever sobre o que quer compartilhar com Ele nessa semana.', dinamica: 'Releitura de Lc 15,11-32 focando no comportamento do Pai — listar as atitudes do Pai e compará-las com a imagem que tínhamos.' }
+    ],
+    recursos: ['CIC §232-267', 'Ícone de Rublev (imagem)', 'Documento: "Deus é Amor" (Deus Caritas Est) — Bento XVI', 'Hino: "Glória ao Pai"']
+  },
+  maria: {
+    chaves: ['maria','nossa senhora','virgem','mãe de deus','imaculada','assunção','aparições','fátima','lourdes'],
+    titulo: 'Maria — Mãe de Deus e Nossa Mãe',
+    objetivo: 'Compreender o papel de Maria na história da salvação, conhecer os dogmas marianos e aprofundar a devoção filial à Mãe de Deus.',
+    cic: ['CIC §484-507 (Maria na economia da salvação)', 'CIC §963-975 (Maria, Mãe da Igreja)', 'CIC §971 (veneração a Maria)', 'CIC §2673-2679 (oração com Maria)'],
+    biblia: ['Lc 1,26-38 — Anunciação', 'Lc 1,46-55 — Magnificat', 'Jo 2,1-11 — Bodas de Caná', 'Jo 19,25-27 — Maria aos pés da Cruz'],
+    aulas: [
+      { titulo: 'Maria na Bíblia', ver: 'Listar aparições de Maria no NT. "O que mais chama atenção em Maria para você? O que ela diz, faz, como age?"', julgar: 'Lc 1,26-38: o "sim" de Maria (fiat). Lc 1,46-55: o Magnificat como oração de louvor. Jo 19,25-27: Maria como mãe de todos os discípulos. Maria, a primeira discípula.', agir: 'Memorizar o Magnificat ou uma parte dele. Rezar com as palavras de Maria.', dinamica: 'Dramatização da Anunciação — perguntar: "Se você fosse Maria, o que sentiria? O que responderia?"' },
+      { titulo: 'Os Dogmas Marianos', ver: '"Você já ouviu falar em dogma? O que acha que significa?" Desmistificar a palavra.', julgar: 'Os quatro dogmas: Maternidade Divina (CIC §495), Virgindade Perpétua (CIC §499), Imaculada Conceição (CIC §491), Assunção (CIC §966). Por que a Igreja os define? Como se relacionam com Cristo.', agir: 'Pesquisar uma das aparições marianas aprovadas (Fátima, Lourdes, Guadalupe) e compartilhar na próxima aula.', dinamica: 'Quiz dos dogmas marianos com cartões — equipes competem acertando definições e referências.' }
+    ],
+    recursos: ['CIC §484-511, 963-975', 'Encíclica: "Redemptoris Mater" — João Paulo II', 'Livreto: Aparições de Nossa Senhora — CNBB', 'Hino: "Ave Maria" (Schubert)']
+  },
+  eucaristia: {
+    chaves: ['eucaristia','missa','comunhão','corpo de cristo','última ceia','transubstanciação'],
+    titulo: 'A Eucaristia — Fonte e Cume da Vida Cristã',
+    objetivo: 'Aprofundar a compreensão da Eucaristia como presença real de Cristo, memorial do sacrifício pascal e alimento para a vida eterna.',
+    cic: ['CIC §1322-1327 (definição e nomes)', 'CIC §1333-1344 (a Última Ceia)', 'CIC §1373-1381 (presença real de Cristo)', 'CIC §1382-1398 (receber a comunhão)'],
+    biblia: ['Lc 22,19-20 — Instituição da Eucaristia', 'Jo 6,51-58 — Pão da Vida', '1Cor 11,23-26 — Tradição paulina', 'Lc 24,13-35 — Discípulos de Emaús'],
+    aulas: [
+      { titulo: 'A Última Ceia e a Eucaristia', ver: 'Contemplar uma imagem da Última Ceia (Leonardo da Vinci). "O que está acontecendo? O que Jesus sente? O que os apóstolos sentem?"', julgar: 'Lc 22,19-20: "Fazei isso em memória de mim." A Eucaristia como memorial (não mera recordação), sacrifício e banquete. CIC §1340: vínculo inseparável com a Páscoa.', agir: 'Preparar uma intenção especial para oferecer na próxima Missa.', dinamica: 'Releitura dos discípulos de Emaús (Lc 24): identificar as fases da Missa na cena — Liturgia da Palavra (explicação das Escrituras) e Liturgia Eucarística (partir o pão).' },
+      { titulo: 'Presença Real e Como Receber a Comunhão', ver: '"Você já sentiu algo especial ao receber a Comunhão? Você se prepara? Como?" Partilha respeitosa.', julgar: 'CIC §1374: Christ é real e substancialmente presente. Transubstanciação. CIC §1385-1387: condições para comungar bem — estado de graça, jejum eucarístico, devoção. Importância da Missa dominical.', agir: 'Roteiro de preparação para a Missa: o que fazer antes, durante e depois da Comunhão.', dinamica: 'Montar o "mapa da Missa": esquema visual com todas as partes e o que significam, para usar como guia nas próximas participações.' }
+    ],
+    recursos: ['CIC §1322-1419', 'Documento: "Ecclesia de Eucharistia" — João Paulo II', 'Livreto: A Santa Missa Passo a Passo — CNBB', 'Hino: "O Pão que Deus nos Dá"']
+  }
+};
+
+function detectarTema(temaInput) {
+  const t = temaInput.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  for (const [chave, dados] of Object.entries(TEMAS_CAT)) {
+    if (dados.chaves.some(k => t.includes(k.normalize('NFD').replace(/[̀-ͯ]/g,'')))) {
+      return dados;
+    }
+  }
+  return null;
+}
+
+function gerarAulasGenericas(tema, faixa, nAulas) {
+  const dinamicasPorFaixa = {
+    'crianças': ['Desenho e colorir', 'Música e gestos', 'Contação de história com fantoches', 'Jogo de memória bíblico'],
+    'pré-adolescentes': ['Quiz em equipes', 'Teatro relâmpago', 'Mural colaborativo', 'Caça ao versículo'],
+    'adolescentes': ['Debate e roda de conversa', 'Mapa mental', 'Análise de música/vídeo', 'Dinâmica de grupo'],
+    'adultos': ['Lectio Divina', 'Partilha testemunhal', 'Estudo do CIC', 'Círculo bíblico']
+  };
+  const faixaKey = Object.keys(dinamicasPorFaixa).find(k => faixa.includes(k)) || 'adolescentes';
+  const dinamicas = dinamicasPorFaixa[faixaKey];
+
+  return Array.from({length: nAulas}, (_, i) => ({
+    titulo: `${tema} — Parte ${i + 1}`,
+    ver: `Momento de partilha: experiências e conhecimentos prévios sobre "${tema}". O que já sei? O que quero aprender?`,
+    julgar: `Aprofundamento da fé: leitura e reflexão sobre "${tema}" à luz do Catecismo da Igreja Católica e da Sagrada Escritura. Referência: CIC §1 e seguintes conforme o tema.`,
+    agir: `Proposta concreta para a semana: como viver "${tema}" no cotidiano. Oração de encerramento.`,
+    dinamica: dinamicas[i % dinamicas.length] + ': atividade criativa relacionada ao tema da aula.'
+  }));
+}
+
+function montarPlanoMD(tema, faixa, nAulas, dadosTema) {
+  const titulo = dadosTema ? dadosTema.titulo : tema;
+  const objetivo = dadosTema ? dadosTema.objetivo : `Levar os catequizandos a compreender **${tema}** à luz do CIC e da Sagrada Escritura, desenvolvendo conhecimento, fé e compromisso de vida.`;
+  const aulas = dadosTema ? [...dadosTema.aulas.slice(0, nAulas)] : gerarAulasGenericas(tema, faixa, nAulas);
+  while (aulas.length < nAulas) {
+    const extra = gerarAulasGenericas(tema, faixa, 1)[0];
+    extra.titulo = `${titulo} — Aprofundamento ${aulas.length + 1}`;
+    aulas.push(extra);
+  }
+  const cic = dadosTema ? dadosTema.cic : ['CIC §1 e seguintes (consultar conforme o tema)'];
+  const biblia = dadosTema ? dadosTema.biblia : [`Mt 28,19 — "Ide e ensinai a todas as nações"`];
+  const recursos = dadosTema ? dadosTema.recursos : ['Catecismo da Igreja Católica (CIC)', 'Bíblia Ave Maria', 'Catequese na Igreja de Hoje — CNBB'];
+
+  // Duração total por número de aulas
+  const duracaoAula = nAulas <= 2 ? '60 min' : nAulas <= 4 ? '50 min' : '45 min';
+
+  let md = `# Plano de Catequese\n## ${titulo}\n\n`;
+  md += `| | |\n|---|---|\n`;
+  md += `| **Público-alvo** | ${faixa} |\n`;
+  md += `| **Número de aulas** | ${nAulas} aula(s) de ${duracaoAula} cada |\n`;
+  md += `| **Metodologia** | VER – JULGAR – AGIR (Revisão de Vida) |\n`;
+  md += `| **Base doutrinária** | Catecismo da Igreja Católica (CIC) |\n\n---\n\n`;
+
+  md += `## 🎯 Objetivo Geral\n\n${objetivo}\n\n`;
+  md += `### Objetivos Específicos\n`;
+  md += `- Conhecer o ensinamento da Igreja sobre o tema através do CIC e da Sagrada Escritura\n`;
+  md += `- Refletir sobre a experiência pessoal e comunitária à luz da fé\n`;
+  md += `- Propor compromissos concretos de vida cristã\n\n---\n\n`;
+
+  md += `## 📖 Referências Doutrinais e Bíblicas\n\n`;
+  md += `### Catecismo da Igreja Católica\n${cic.map(r => `- ${r}`).join('\n')}\n\n`;
+  md += `### Sagrada Escritura\n${biblia.map(r => `- ${r}`).join('\n')}\n\n---\n\n`;
+
+  md += `## 📋 Roteiro das Aulas\n\n`;
+
+  aulas.forEach((aula, i) => {
+    md += `---\n\n`;
+    md += `## 📌 Aula ${i + 1} de ${nAulas}: ${aula.titulo}\n\n`;
+    md += `**Duração:** ${duracaoAula} &nbsp;|&nbsp; **Método:** VER – JULGAR – AGIR\n\n`;
+
+    // Materiais necessários
+    md += `### 🧰 Materiais Necessários\n`;
+    md += `- Bíblia (edição Ave Maria ou CNBB)\n`;
+    md += `- Catecismo da Igreja Católica (CIC) ou apostila com trechos\n`;
+    md += `- Folha de papel e caneta para cada participante\n`;
+    md += `- Vela e Cruz (para oração de abertura)\n\n`;
+
+    // Abertura
+    md += `### 🕯️ Abertura — Oração e Acolhida *(5 min)*\n`;
+    md += `Acender a vela e fazer o sinal da Cruz. Oração espontânea ou o seguinte convite:\n\n`;
+    md += `> *"Senhor, abre nosso coração e nossa mente para compreender Tua Palavra e deixar que ela transforme nossa vida. Amém."*\n\n`;
+    md += `Música sugerida para acolhida: **"Vem, Espírito de Deus"** ou **"Eis-me Aqui, Senhor"**.\n\n`;
+
+    // VER
+    md += `### 👁️ VER — Aproximação da Realidade *(10 min)*\n\n`;
+    md += `**Objetivo desta etapa:** Partir da experiência concreta dos catequizandos, do cotidiano, da realidade vivida.\n\n`;
+    md += `**Desenvolvimento:**\n${aula.ver}\n\n`;
+    md += `**Perguntas para reflexão em grupo:**\n`;
+    md += `- O que você já sabe ou já ouviu falar sobre este tema?\n`;
+    md += `- Como este assunto aparece no seu dia a dia?\n`;
+    md += `- O que você gostaria de entender melhor?\n\n`;
+
+    // JULGAR
+    md += `### ✝️ JULGAR — À Luz da Fé *(25 min)*\n\n`;
+    md += `**Objetivo desta etapa:** Iluminar a realidade com a Palavra de Deus e o ensinamento da Igreja.\n\n`;
+    md += `**Desenvolvimento:**\n${aula.julgar}\n\n`;
+    md += `**Perguntas para aprofundamento:**\n`;
+    md += `- O que a Igreja ensina sobre este tema no Catecismo?\n`;
+    md += `- O que a Bíblia nos revela? Como podemos aplicar essa Palavra?\n`;
+    md += `- Que diferença faz para a vida cristã compreender bem este ensinamento?\n\n`;
+    md += `> **💡 Dinâmica:** ${aula.dinamica}\n\n`;
+
+    // AGIR
+    md += `### 🌱 AGIR — Compromisso e Missão *(10 min)*\n\n`;
+    md += `**Objetivo desta etapa:** Transformar a reflexão em decisão e ação concreta de vida.\n\n`;
+    md += `**Desenvolvimento:**\n${aula.agir}\n\n`;
+    md += `**Proposta de compromisso para a semana:**\n`;
+    md += `Cada catequizando escolhe **uma ação concreta** para viver o tema em sua família, escola ou comunidade.\n\n`;
+    md += `*Sugestão:* Registrar o compromisso em um "cartão de missão" que levam para casa.\n\n`;
+
+    // Encerramento
+    md += `### 🙏 Encerramento *(5 min)*\n`;
+    md += `- Partilhar brevemente os compromissos assumidos\n`;
+    md += `- Oração espontânea ou Pai Nosso em grupo\n`;
+    md += `- Avisos sobre a próxima aula\n\n`;
+
+    // Avaliação
+    if (nAulas > 1 && i === aulas.length - 1) {
+      md += `### 📊 Avaliação do Percurso\n`;
+      md += `Ao final do ciclo, propor uma avaliação simples:\n`;
+      md += `- O que aprendi de novo?\n`;
+      md += `- O que mais me marcou?\n`;
+      md += `- Como mudou a minha vida a partir destas aulas?\n`;
+      md += `- O que ainda quero aprofundar?\n\n`;
+    }
+  });
+
+  md += `---\n\n## 📚 Recursos e Materiais Complementares\n\n`;
+  md += recursos.map(r => `- ${r}`).join('\n') + '\n\n';
+  md += `### Sugestões de Sites e Referências Online\n`;
+  md += `- **Vatican.va** — Documentos oficiais da Igreja\n`;
+  md += `- **CNBB.org.br** — Conferência Nacional dos Bispos do Brasil\n`;
+  md += `- **catecismo.or.br** — CIC completo em português\n\n`;
+  md += `---\n\n`;
+  md += `> *"Ide e ensinai a todas as nações, batizando-as em nome do Pai, do Filho e do Espírito Santo, ensinando-as a guardar tudo o que vos mandei."*\n> — **Mt 28,19-20**`;
+  return md;
+}
+
+async function gerarCatequese() {
+  const tema = document.getElementById('cat-tema').value.trim();
+  if (!tema) { mostrarToast('Informe um tema.', true); return; }
+  const btn = document.getElementById('btn-cat');
+  btn.disabled = true; btn.textContent = '⏳ Gerando…';
+  const div = document.getElementById('plano-resultado');
+  div.style.display = 'block';
+  div.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const faixa = document.getElementById('cat-faixa').value;
+  const nAulas = parseInt(document.getElementById('cat-aulas').value) || 1;
+  await new Promise(r => setTimeout(r, 800));
+  const dadosTema = detectarTema(tema);
+  const planoMD = montarPlanoMD(tema, faixa, nAulas, dadosTema);
+  const html = (typeof marked !== 'undefined' && marked.parse) ? marked.parse(planoMD) : planoMD.replace(/\n/g, '<br>');
+  div.innerHTML = `<div class="plano-result">${html}</div>`;
+  btn.disabled = false; btn.textContent = '📋 Gerar Plano';
+}
+
+// ─── TOAST ───────────────────────────────────────────────────────────
+function mostrarToast(msg,erro=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(erro?' error':'');
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),4000);
+}
+</script>
+
+
+</body>
+</html>
