@@ -311,6 +311,9 @@ select:focus,input:focus{outline:none;border-color:var(--accent);}
 .plano-result hr{border:none;border-top:1px solid var(--border);margin:20px 0;}
 .plano-result blockquote{border-left:3px solid var(--gold);padding:10px 16px;margin:14px 0;background:var(--bg2);border-radius:0 8px 8px 0;font-style:italic;color:var(--fg);font-size:13px;}
 .plano-result strong{color:var(--fg);font-weight:600;}
+.plano-result table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:13px;}
+.plano-result table td{padding:7px 12px;border:1px solid var(--border);}
+.plano-result table td:first-child{font-weight:600;color:var(--fg2);background:var(--bg2);width:40%;}
 
 /* ── PERFIL ── */
 .perfil-body{padding:28px 40px;flex:1;}
@@ -935,9 +938,8 @@ function gerarAulasGenericas(tema, faixa, nAulas) {
 
 function montarPlanoMD(tema, faixa, nAulas, dadosTema) {
   const titulo = dadosTema ? dadosTema.titulo : tema;
-  const objetivo = dadosTema ? dadosTema.objetivo : `Levar os catequizandos a compreender **${tema}** à luz do CIC e da Sagrada Escritura.`;
-  const aulas = dadosTema ? dadosTema.aulas.slice(0, nAulas) : gerarAulasGenericas(tema, faixa, nAulas);
-  // Se pediu mais aulas do que temos, completar com genéricas
+  const objetivo = dadosTema ? dadosTema.objetivo : `Levar os catequizandos a compreender **${tema}** à luz do CIC e da Sagrada Escritura, desenvolvendo conhecimento, fé e compromisso de vida.`;
+  const aulas = dadosTema ? [...dadosTema.aulas.slice(0, nAulas)] : gerarAulasGenericas(tema, faixa, nAulas);
   while (aulas.length < nAulas) {
     const extra = gerarAulasGenericas(tema, faixa, 1)[0];
     extra.titulo = `${titulo} — Aprofundamento ${aulas.length + 1}`;
@@ -947,24 +949,98 @@ function montarPlanoMD(tema, faixa, nAulas, dadosTema) {
   const biblia = dadosTema ? dadosTema.biblia : [`Mt 28,19 — "Ide e ensinai a todas as nações"`];
   const recursos = dadosTema ? dadosTema.recursos : ['Catecismo da Igreja Católica (CIC)', 'Bíblia Ave Maria', 'Catequese na Igreja de Hoje — CNBB'];
 
-  let md = `# Plano de Catequese: ${titulo}\n\n`;
-  md += `**Público:** ${faixa} &nbsp;·&nbsp; **${nAulas} aula(s)**\n\n---\n\n`;
-  md += `## 🎯 Objetivo Geral\n\n${objetivo}\n\n---\n\n`;
-  md += `## 📖 Referências Principais\n\n`;
-  md += `**Catecismo (CIC):**\n${cic.map(r => `- ${r}`).join('\n')}\n\n`;
-  md += `**Sagrada Escritura:**\n${biblia.map(r => `- ${r}`).join('\n')}\n\n---\n\n`;
+  // Duração total por número de aulas
+  const duracaoAula = nAulas <= 2 ? '60 min' : nAulas <= 4 ? '50 min' : '45 min';
+
+  let md = `# Plano de Catequese\n## ${titulo}\n\n`;
+  md += `| | |\n|---|---|\n`;
+  md += `| **Público-alvo** | ${faixa} |\n`;
+  md += `| **Número de aulas** | ${nAulas} aula(s) de ${duracaoAula} cada |\n`;
+  md += `| **Metodologia** | VER – JULGAR – AGIR (Revisão de Vida) |\n`;
+  md += `| **Base doutrinária** | Catecismo da Igreja Católica (CIC) |\n\n---\n\n`;
+
+  md += `## 🎯 Objetivo Geral\n\n${objetivo}\n\n`;
+  md += `### Objetivos Específicos\n`;
+  md += `- Conhecer o ensinamento da Igreja sobre o tema através do CIC e da Sagrada Escritura\n`;
+  md += `- Refletir sobre a experiência pessoal e comunitária à luz da fé\n`;
+  md += `- Propor compromissos concretos de vida cristã\n\n---\n\n`;
+
+  md += `## 📖 Referências Doutrinais e Bíblicas\n\n`;
+  md += `### Catecismo da Igreja Católica\n${cic.map(r => `- ${r}`).join('\n')}\n\n`;
+  md += `### Sagrada Escritura\n${biblia.map(r => `- ${r}`).join('\n')}\n\n---\n\n`;
+
+  md += `## 📋 Roteiro das Aulas\n\n`;
 
   aulas.forEach((aula, i) => {
-    md += `## Aula ${i + 1}: ${aula.titulo}\n\n`;
-    md += `### 👁️ VER — Abertura e Aproximação *(10 min)*\n${aula.ver}\n\n`;
-    md += `### ✝️ JULGAR — À Luz da Fé *(30 min)*\n${aula.julgar}\n\n`;
-    md += `### 🌱 AGIR — Compromisso e Missão *(10 min)*\n${aula.agir}\n\n`;
-    md += `> **💡 Dinâmica sugerida:** ${aula.dinamica}\n\n`;
-    if (i < aulas.length - 1) md += `---\n\n`;
+    md += `---\n\n`;
+    md += `## 📌 Aula ${i + 1} de ${nAulas}: ${aula.titulo}\n\n`;
+    md += `**Duração:** ${duracaoAula} &nbsp;|&nbsp; **Método:** VER – JULGAR – AGIR\n\n`;
+
+    // Materiais necessários
+    md += `### 🧰 Materiais Necessários\n`;
+    md += `- Bíblia (edição Ave Maria ou CNBB)\n`;
+    md += `- Catecismo da Igreja Católica (CIC) ou apostila com trechos\n`;
+    md += `- Folha de papel e caneta para cada participante\n`;
+    md += `- Vela e Cruz (para oração de abertura)\n\n`;
+
+    // Abertura
+    md += `### 🕯️ Abertura — Oração e Acolhida *(5 min)*\n`;
+    md += `Acender a vela e fazer o sinal da Cruz. Oração espontânea ou o seguinte convite:\n\n`;
+    md += `> *"Senhor, abre nosso coração e nossa mente para compreender Tua Palavra e deixar que ela transforme nossa vida. Amém."*\n\n`;
+    md += `Música sugerida para acolhida: **"Vem, Espírito de Deus"** ou **"Eis-me Aqui, Senhor"**.\n\n`;
+
+    // VER
+    md += `### 👁️ VER — Aproximação da Realidade *(10 min)*\n\n`;
+    md += `**Objetivo desta etapa:** Partir da experiência concreta dos catequizandos, do cotidiano, da realidade vivida.\n\n`;
+    md += `**Desenvolvimento:**\n${aula.ver}\n\n`;
+    md += `**Perguntas para reflexão em grupo:**\n`;
+    md += `- O que você já sabe ou já ouviu falar sobre este tema?\n`;
+    md += `- Como este assunto aparece no seu dia a dia?\n`;
+    md += `- O que você gostaria de entender melhor?\n\n`;
+
+    // JULGAR
+    md += `### ✝️ JULGAR — À Luz da Fé *(25 min)*\n\n`;
+    md += `**Objetivo desta etapa:** Iluminar a realidade com a Palavra de Deus e o ensinamento da Igreja.\n\n`;
+    md += `**Desenvolvimento:**\n${aula.julgar}\n\n`;
+    md += `**Perguntas para aprofundamento:**\n`;
+    md += `- O que a Igreja ensina sobre este tema no Catecismo?\n`;
+    md += `- O que a Bíblia nos revela? Como podemos aplicar essa Palavra?\n`;
+    md += `- Que diferença faz para a vida cristã compreender bem este ensinamento?\n\n`;
+    md += `> **💡 Dinâmica:** ${aula.dinamica}\n\n`;
+
+    // AGIR
+    md += `### 🌱 AGIR — Compromisso e Missão *(10 min)*\n\n`;
+    md += `**Objetivo desta etapa:** Transformar a reflexão em decisão e ação concreta de vida.\n\n`;
+    md += `**Desenvolvimento:**\n${aula.agir}\n\n`;
+    md += `**Proposta de compromisso para a semana:**\n`;
+    md += `Cada catequizando escolhe **uma ação concreta** para viver o tema em sua família, escola ou comunidade.\n\n`;
+    md += `*Sugestão:* Registrar o compromisso em um "cartão de missão" que levam para casa.\n\n`;
+
+    // Encerramento
+    md += `### 🙏 Encerramento *(5 min)*\n`;
+    md += `- Partilhar brevemente os compromissos assumidos\n`;
+    md += `- Oração espontânea ou Pai Nosso em grupo\n`;
+    md += `- Avisos sobre a próxima aula\n\n`;
+
+    // Avaliação
+    if (nAulas > 1 && i === aulas.length - 1) {
+      md += `### 📊 Avaliação do Percurso\n`;
+      md += `Ao final do ciclo, propor uma avaliação simples:\n`;
+      md += `- O que aprendi de novo?\n`;
+      md += `- O que mais me marcou?\n`;
+      md += `- Como mudou a minha vida a partir destas aulas?\n`;
+      md += `- O que ainda quero aprofundar?\n\n`;
+    }
   });
 
-  md += `---\n\n## 📚 Recursos e Materiais\n${recursos.map(r => `- ${r}`).join('\n')}\n\n`;
-  md += `> *"Ide e ensinai a todas as nações, batizando-as em nome do Pai, do Filho e do Espírito Santo."* — Mt 28,19`;
+  md += `---\n\n## 📚 Recursos e Materiais Complementares\n\n`;
+  md += recursos.map(r => `- ${r}`).join('\n') + '\n\n';
+  md += `### Sugestões de Sites e Referências Online\n`;
+  md += `- **Vatican.va** — Documentos oficiais da Igreja\n`;
+  md += `- **CNBB.org.br** — Conferência Nacional dos Bispos do Brasil\n`;
+  md += `- **catecismo.or.br** — CIC completo em português\n\n`;
+  md += `---\n\n`;
+  md += `> *"Ide e ensinai a todas as nações, batizando-as em nome do Pai, do Filho e do Espírito Santo, ensinando-as a guardar tudo o que vos mandei."*\n> — **Mt 28,19-20**`;
   return md;
 }
 
