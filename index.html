@@ -376,58 +376,15 @@ select:focus,input:focus{outline:none;border-color:var(--accent);}
       </div>
     </div>
 
-    <div class="auth-tabs">
-      <button class="auth-tab active" onclick="switchAuthTab('login')">Entrar</button>
-      <button class="auth-tab" onclick="switchAuthTab('cadastro')">Criar conta</button>
-    </div>
-
-    <!-- LOGIN -->
+    <!-- MAGIC LINK -->
     <form id="form-login" class="auth-form active" onsubmit="fazerLogin(event)">
+      <p style="font-size:14px;color:var(--fg2);margin-bottom:12px;text-align:center;">Digite seu e-mail e enviaremos um link de acesso.</p>
       <div>
         <label>E-mail</label>
         <input type="email" id="login-email" placeholder="seu@email.com" required autocomplete="email">
       </div>
-      <div>
-        <label>Senha</label>
-        <input type="password" id="login-senha" placeholder="Sua senha" required autocomplete="current-password">
-      </div>
       <div id="login-msg" style="display:none" class="auth-msg"></div>
-      <button type="submit" class="btn-auth" id="btn-login">Entrar →</button>
-      <div class="auth-divider">
-        <button type="button" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;" onclick="mostrarRecuperar()">Esqueci minha senha</button>
-      </div>
-    </form>
-
-    <!-- CADASTRO -->
-    <form id="form-cadastro" class="auth-form" onsubmit="fazerCadastro(event)">
-      <div>
-        <label>Nome completo</label>
-        <input type="text" id="cad-nome" placeholder="Seu nome" required autocomplete="name">
-      </div>
-      <div>
-        <label>E-mail</label>
-        <input type="email" id="cad-email" placeholder="seu@email.com" required autocomplete="email">
-      </div>
-      <div>
-        <label>Senha (mínimo 6 caracteres)</label>
-        <input type="password" id="cad-senha" placeholder="Crie uma senha" required minlength="6" autocomplete="new-password">
-      </div>
-      <div id="cad-msg" style="display:none" class="auth-msg"></div>
-      <button type="submit" class="btn-auth" id="btn-cad">Criar conta →</button>
-    </form>
-
-    <!-- RECUPERAR SENHA -->
-    <form id="form-recuperar" class="auth-form" onsubmit="recuperarSenha(event)">
-      <p style="font-size:13px;color:var(--fg2);margin-bottom:4px;">Digite seu e-mail e enviaremos um link para redefinir sua senha.</p>
-      <div>
-        <label>E-mail</label>
-        <input type="email" id="rec-email" placeholder="seu@email.com" required>
-      </div>
-      <div id="rec-msg" style="display:none" class="auth-msg"></div>
-      <button type="submit" class="btn-auth" id="btn-rec">Enviar link →</button>
-      <div class="auth-divider">
-        <button type="button" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;" onclick="switchAuthTab('login')">← Voltar ao login</button>
-      </div>
+      <button type="submit" class="btn-auth" id="btn-login">Enviar link de acesso →</button>
     </form>
   </div>
 </div>
@@ -642,98 +599,30 @@ const supa = createClient(
 );
 
 // ─── AUTH TABS ───────────────────────────────────────────────────────
-function switchAuthTab(tab) {
-  document.querySelectorAll('.auth-tab').forEach((b,i) => {
-    b.classList.toggle('active', ['login','cadastro','recuperar'][i] === tab);
-  });
-  document.getElementById('form-login').classList.toggle('active', tab==='login');
-  document.getElementById('form-cadastro').classList.toggle('active', tab==='cadastro');
-  document.getElementById('form-recuperar').classList.toggle('active', tab==='recuperar');
-  // mostrar só 2 abas visíveis
-  document.querySelectorAll('.auth-tab')[2] && (document.querySelectorAll('.auth-tab')[2].style.display = tab==='recuperar' ? 'block':'none');
-}
-
-function mostrarRecuperar() {
-  document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('form-login').classList.remove('active');
-  document.getElementById('form-cadastro').classList.remove('active');
-  document.getElementById('form-recuperar').classList.add('active');
-}
-
-// ─── LOGIN ───────────────────────────────────────────────────────────
+// ─── LOGIN (MAGIC LINK) ──────────────────────────────────────────────
 async function fazerLogin(e) {
   e.preventDefault();
   const btn = document.getElementById('btn-login');
   const msg = document.getElementById('login-msg');
-  btn.disabled = true; btn.textContent = '⏳ Entrando…';
-  msg.style.display = 'none';
-
-  const { error } = await supa.auth.signInWithPassword({
-    email: document.getElementById('login-email').value.trim(),
-    password: document.getElementById('login-senha').value,
-  });
-
-  if (error) {
-    msg.style.display = 'block';
-    msg.className = 'auth-msg error';
-    if (error.message.includes('Invalid login')) msg.textContent = 'E-mail ou senha incorretos.';
-    else if (error.message.includes('Email not confirmed')) msg.textContent = 'Confirme seu e-mail antes de entrar.';
-    else msg.textContent = error.message;
-    btn.disabled = false; btn.textContent = 'Entrar →';
-  }
-  // Se ok, onAuthStateChange cuida do resto
-}
-
-// ─── CADASTRO ────────────────────────────────────────────────────────
-async function fazerCadastro(e) {
-  e.preventDefault();
-  const btn = document.getElementById('btn-cad');
-  const msg = document.getElementById('cad-msg');
-  btn.disabled = true; btn.textContent = '⏳ Criando conta…';
-  msg.style.display = 'none';
-
-  const nome = document.getElementById('cad-nome').value.trim();
-  const email = document.getElementById('cad-email').value.trim();
-  const senha = document.getElementById('cad-senha').value;
-
-  const { error } = await supa.auth.signUp({
-    email, password: senha,
-    options: { data: { nome } }
-  });
-
-  if (error) {
-    msg.style.display = 'block';
-    msg.className = 'auth-msg error';
-    if (error.message.includes('already registered')) msg.textContent = 'Este e-mail já está cadastrado.';
-    else msg.textContent = error.message;
-  } else {
-    msg.style.display = 'block';
-    msg.className = 'auth-msg success';
-    msg.textContent = '✅ Conta criada! Verifique seu e-mail para confirmar o cadastro.';
-  }
-  btn.disabled = false; btn.textContent = 'Criar conta →';
-}
-
-// ─── RECUPERAR SENHA ─────────────────────────────────────────────────
-async function recuperarSenha(e) {
-  e.preventDefault();
-  const btn = document.getElementById('btn-rec');
-  const msg = document.getElementById('rec-msg');
   btn.disabled = true; btn.textContent = '⏳ Enviando…';
+  msg.style.display = 'none';
 
-  const { error } = await supa.auth.resetPasswordForEmail(
-    document.getElementById('rec-email').value.trim()
-  );
+  const email = document.getElementById('login-email').value.trim();
+  const { error } = await supa.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: 'https://gevanssolucoes.github.io/evaldo/' }
+  });
 
   msg.style.display = 'block';
   if (error) {
     msg.className = 'auth-msg error';
     msg.textContent = error.message;
+    btn.disabled = false; btn.textContent = 'Enviar link de acesso →';
   } else {
     msg.className = 'auth-msg success';
-    msg.textContent = '✅ Link enviado! Verifique seu e-mail.';
+    msg.textContent = '✅ Link enviado! Verifique seu e-mail e clique no link para entrar.';
+    btn.textContent = 'Link enviado!';
   }
-  btn.disabled = false; btn.textContent = 'Enviar link →';
 }
 
 // ─── LOGOUT ──────────────────────────────────────────────────────────
