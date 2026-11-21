@@ -1,14 +1,942 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Comparador de Tabelas</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Assistente Católico</title>
+</head>
+<body>
+
+<title>Assistente Católico</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+
+<style>
+:root {
+  --bg: #faf8f5;
+  --bg2: #f0ece4;
+  --fg: #1a1714;
+  --fg2: #6b6155;
+  --fg3: #a09080;
+  --accent: #8b3a2a;
+  --accent2: #c0622f;
+  --gold: #b8943f;
+  --border: #ddd5c8;
+  --card: #ffffff;
+  --nav-bg: #1a1410;
+  --nav-fg: #e8ddd0;
+  --nav-active: #8b3a2a;
+  --nav-hover: #2d241e;
+  --shadow: 0 2px 16px rgba(0,0,0,0.08);
+  --radius: 12px;
+  --font-d: 'Playfair Display', Georgia, serif;
+  --font-b: 'Inter', system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#120f0c;--bg2:#1e1814;--fg:#f0e8dc;--fg2:#b0a090;--fg3:#7a6a5a;
+    --accent:#c0522a;--accent2:#e07040;--gold:#c9a84c;--border:#2e261e;
+    --card:#1e1a16;--nav-bg:#0d0a08;--nav-fg:#c8bba8;--nav-active:#c0522a;
+    --nav-hover:#1e1814;--shadow:0 2px 16px rgba(0,0,0,.4);color-scheme:dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#120f0c;--bg2:#1e1814;--fg:#f0e8dc;--fg2:#b0a090;--fg3:#7a6a5a;
+  --accent:#c0522a;--accent2:#e07040;--gold:#c9a84c;--border:#2e261e;
+  --card:#1e1a16;--nav-bg:#0d0a08;--nav-fg:#c8bba8;--nav-active:#c0522a;
+  --nav-hover:#1e1814;--shadow:0 2px 16px rgba(0,0,0,.4);color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--font-b);font-size:15px;line-height:1.6}
+
+/* ── AUTH SCREEN ── */
+#auth-screen {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #1a1410 0%, #2d1a10 50%, #1a1410 100%);
+}
+.auth-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+}
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.auth-cross {
+  width: 38px;height: 38px;position: relative;flex-shrink: 0;
+}
+.auth-cross::before,.auth-cross::after {
+  content:'';position:absolute;background:var(--gold);border-radius:2px;
+}
+.auth-cross::before{width:6px;height:38px;left:16px;top:0}
+.auth-cross::after{width:26px;height:6px;left:6px;top:12px}
+.auth-logo h1{font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--fg);line-height:1.2}
+.auth-logo span{font-size:11px;color:var(--fg3);display:block;margin-top:2px;letter-spacing:.08em}
+
+.auth-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 24px;
+  gap: 0;
+}
+.auth-tab {
+  flex: 1;
+  padding: 10px;
+  background: none;
+  border: none;
+  color: var(--fg3);
+  font-family: var(--font-b);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all .15s;
+}
+.auth-tab.active {color:var(--accent);border-bottom-color:var(--accent);}
+
+.auth-form {display:none;flex-direction:column;gap:14px;}
+.auth-form.active{display:flex;}
+
+.auth-form label{font-size:12px;font-weight:600;color:var(--fg2);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:4px;}
+.auth-form input {
+  width:100%;padding:11px 14px;
+  border:1.5px solid var(--border);border-radius:9px;
+  background:var(--bg);color:var(--fg);
+  font-family:var(--font-b);font-size:14px;
+  transition:border-color .15s;
+}
+.auth-form input:focus{outline:none;border-color:var(--accent);}
+.btn-auth {
+  padding:13px;background:var(--accent);color:white;
+  border:none;border-radius:9px;font-family:var(--font-b);
+  font-size:15px;font-weight:700;cursor:pointer;
+  transition:background .15s;margin-top:4px;
+  letter-spacing:.01em;
+}
+.btn-auth:hover{background:var(--accent2);}
+.btn-auth:disabled{opacity:.55;cursor:not-allowed;}
+.auth-divider{text-align:center;font-size:12px;color:var(--fg3);}
+.auth-msg{font-size:13px;padding:10px 14px;border-radius:8px;text-align:center;}
+.auth-msg.error{background:#fde8e8;color:#742a2a;border:1px solid #f5c6c6;}
+.auth-msg.success{background:#e8f5e9;color:#1b5e20;border:1px solid #c8e6c9;}
+
+/* ── APP ── */
+#app-screen {display:none;}
+#app-screen.visible{display:block;}
+
+.app {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  height: 100dvh;
+}
+
+.sidebar {
+  background: var(--nav-bg);
+  display: flex;flex-direction:column;
+  overflow-y:auto;position:sticky;top:0;height:100dvh;
+}
+.sidebar-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,.06);}
+.sb-cross{display:flex;align-items:center;gap:10px;}
+.sb-cross-icon{width:30px;height:30px;position:relative;flex-shrink:0;}
+.sb-cross-icon::before,.sb-cross-icon::after{content:'';position:absolute;background:var(--gold);border-radius:2px;}
+.sb-cross-icon::before{width:5px;height:30px;left:12px;top:0}
+.sb-cross-icon::after{width:20px;height:5px;left:5px;top:9px}
+.sb-cross h1{font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--nav-fg);line-height:1.2}
+.sb-cross span{font-size:10px;font-weight:300;color:var(--fg3);text-transform:uppercase;letter-spacing:.1em;display:block;margin-top:2px}
+
+nav{flex:1;padding:14px 0;}
+.nav-section{padding:8px 16px 4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--fg3);}
+.nav-btn{
+  display:flex;align-items:center;gap:10px;width:100%;
+  padding:10px 20px;background:none;border:none;
+  color:var(--nav-fg);font-family:var(--font-b);font-size:13px;
+  cursor:pointer;text-align:left;opacity:.7;
+  border-left:3px solid transparent;transition:all .15s;
+}
+.nav-btn:hover{background:var(--nav-hover);opacity:1;}
+.nav-btn.active{background:var(--nav-hover);color:#fff;border-left-color:var(--nav-active);opacity:1;font-weight:500;}
+.nav-icon{font-size:15px;width:20px;text-align:center;}
+
+.sidebar-footer{
+  padding:14px 18px;
+  border-top:1px solid rgba(255,255,255,.06);
+  font-size:11px;color:var(--fg3);line-height:1.5;
+}
+.user-info{
+  display:flex;align-items:center;gap:8px;
+  padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.user-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--accent);color:white;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;flex-shrink:0;
+}
+.user-name{font-size:12px;color:var(--nav-fg);flex:1;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.btn-logout{
+  background:none;border:none;color:var(--fg3);
+  font-size:16px;cursor:pointer;padding:2px;
+  transition:color .15s;flex-shrink:0;
+}
+.btn-logout:hover{color:#e57373;}
+
+.main{overflow-y:auto;display:flex;flex-direction:column;}
+.panel{display:none;flex:1;flex-direction:column;}
+.panel.active{display:flex;}
+
+/* ── INÍCIO ── */
+.inicio-hero{
+  background:linear-gradient(135deg,var(--accent) 0%,#4a1a0e 100%);
+  padding:44px 40px 36px;position:relative;overflow:hidden;
+}
+.inicio-hero::before{
+  content:'✝';position:absolute;right:28px;top:50%;
+  transform:translateY(-50%);font-size:110px;opacity:.07;
+  color:white;pointer-events:none;
+}
+.inicio-hero h2{font-family:var(--font-d);font-size:28px;font-weight:700;color:#fff;line-height:1.25;max-width:460px;text-wrap:balance;}
+.inicio-hero p{color:rgba(255,255,255,.72);margin-top:8px;max-width:400px;font-size:13px;}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border-radius:20px;margin-bottom:12px;}
+.inicio-body{padding:28px 40px;flex:1;}
+
+.frase-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:26px;margin-bottom:24px;position:relative;box-shadow:var(--shadow);
+}
+.frase-card::before{
+  content:'"';font-family:var(--font-d);font-size:72px;color:var(--gold);
+  opacity:.2;position:absolute;top:-8px;left:16px;line-height:1;pointer-events:none;
+}
+.frase-num{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:8px;}
+.frase-txt{font-family:var(--font-d);font-style:italic;font-size:17px;line-height:1.55;color:var(--fg);}
+.frase-nav{display:flex;align-items:center;gap:10px;margin-top:14px;}
+.frase-nav button{
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  padding:6px 14px;font-size:12px;color:var(--fg2);cursor:pointer;transition:all .15s;
+}
+.frase-nav button:hover{background:var(--accent);color:white;border-color:var(--accent);}
+.frase-count{font-size:12px;color:var(--fg3);}
+
+.inicio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-top:20px;}
+.inicio-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px;cursor:pointer;transition:all .18s;box-shadow:var(--shadow);
+}
+.inicio-card:hover{transform:translateY(-2px);border-color:var(--accent);}
+.inicio-card .ic{font-size:26px;margin-bottom:8px;}
+.inicio-card h3{font-size:13px;font-weight:600;margin-bottom:3px;}
+.inicio-card p{font-size:11px;color:var(--fg2);}
+
+/* ── CHAT ── */
+.chat-wrap{display:flex;flex-direction:column;height:100%;flex:1;}
+.chat-header{padding:18px 30px 14px;border-bottom:1px solid var(--border);background:var(--card);}
+.chat-header h2{font-family:var(--font-d);font-size:20px;font-weight:700;}
+.chat-header p{font-size:12px;color:var(--fg2);margin-top:2px;}
+.chat-msgs{flex:1;overflow-y:auto;padding:20px 30px;display:flex;flex-direction:column;gap:14px;}
+.msg{max-width:680px;display:flex;gap:10px;}
+.msg.user{align-self:flex-end;flex-direction:row-reverse;}
+.msg-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:var(--bg2);border:1px solid var(--border);}
+.msg.assistant .msg-avatar{background:var(--accent);color:white;}
+.msg-bubble{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 16px;font-size:14px;line-height:1.65;box-shadow:var(--shadow);}
+.msg.user .msg-bubble{background:var(--accent);color:white;border-color:transparent;}
+.msg-bubble p{margin-bottom:6px;}.msg-bubble p:last-child{margin-bottom:0}
+.msg-bubble ul,.msg-bubble ol{padding-left:18px;margin:6px 0}
+.msg-bubble li{margin-bottom:4px;}
+.msg-bubble blockquote{border-left:3px solid var(--gold);padding-left:12px;color:var(--fg2);font-style:italic;margin:8px 0;}
+.typing-indicator{display:flex;align-items:center;gap:5px;padding:8px 12px;}
+.typing-dot{width:7px;height:7px;border-radius:50%;background:var(--fg3);animation:typing 1.2s infinite;}
+.typing-dot:nth-child(2){animation-delay:.2s}.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{opacity:.3;transform:scale(1)}30%{opacity:1;transform:scale(1.2)}}
+.chat-input-area{padding:14px 30px 18px;border-top:1px solid var(--border);background:var(--card);}
+.chat-hints{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px;}
+.hint-chip{font-size:11px;padding:5px 11px;border:1px solid var(--border);border-radius:20px;cursor:pointer;color:var(--fg2);background:var(--bg);transition:all .15s;}
+.hint-chip:hover{background:var(--accent);color:white;border-color:var(--accent);}
+.chat-input-row{display:flex;gap:9px;align-items:flex-end;max-width:720px;}
+.chat-input{flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-family:var(--font-b);font-size:14px;resize:none;min-height:42px;max-height:110px;transition:border-color .15s;line-height:1.5;}
+.chat-input:focus{outline:none;border-color:var(--accent);}
+.chat-send{padding:10px 18px;background:var(--accent);color:white;border:none;border-radius:10px;font-family:var(--font-b);font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap;}
+.chat-send:hover{background:var(--accent2)}.chat-send:disabled{opacity:.5;cursor:not-allowed}
+
+/* ── SANTO ── */
+.section-header{padding:20px 40px 0;border-bottom:1px solid var(--border);background:var(--card);}
+.section-header h2{font-family:var(--font-d);font-size:20px;font-weight:700;}
+.section-header p{font-size:12px;color:var(--fg2);margin-top:2px;padding-bottom:14px;}
+.santo-body{padding:28px 40px;flex:1;}
+.santo-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:20px;}
+.santo-top{background:linear-gradient(135deg,var(--gold) 0%,#8a6020 100%);padding:22px 26px;color:#1a1000;}
+.santo-date{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;opacity:.7;}
+.santo-name{font-family:var(--font-d);font-size:26px;font-weight:700;margin-top:4px;line-height:1.2;}
+.santo-sub{font-size:13px;margin-top:4px;opacity:.8;}
+.santo-content{padding:22px 26px;}
+.santo-sec h3{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:7px;}
+.santo-sec p{font-size:13px;line-height:1.7;color:var(--fg2);margin-bottom:18px;}
+.oracao{background:var(--bg2);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:8px;padding:14px 18px;font-family:var(--font-d);font-style:italic;font-size:14px;line-height:1.7;color:var(--fg);}
+.btn-refresh{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:var(--font-b);font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;}
+.btn-refresh:hover{background:var(--accent2);}
+
+/* ── CATEQUESE ── */
+.cat-body{padding:28px 40px;flex:1;}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);margin-bottom:20px;max-width:580px;}
+.form-card h3{font-family:var(--font-d);font-size:19px;font-weight:700;margin-bottom:5px;}
+.form-card > p{font-size:12px;color:var(--fg2);margin-bottom:18px;}
+.form-row{margin-bottom:14px;}
+label{display:block;font-size:12px;font-weight:600;margin-bottom:5px;color:var(--fg2);text-transform:uppercase;letter-spacing:.06em;}
+select,input[type=text],input[type=email],input[type=number]{
+  width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;
+  background:var(--bg);color:var(--fg);font-family:var(--font-b);font-size:14px;
+  transition:border-color .15s;-webkit-appearance:none;
+}
+select:focus,input:focus{outline:none;border-color:var(--accent);}
+.btn-primary{padding:10px 22px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:var(--font-b);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;}
+.btn-primary:hover{background:var(--accent2)}.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.plano-result{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);max-width:680px;}
+.plano-result h3{font-family:var(--font-d);font-size:20px;font-weight:700;margin-bottom:14px;}
+.plano-result h4{font-size:14px;font-weight:600;color:var(--accent2);margin:18px 0 7px;}
+.plano-result p,.plano-result li{font-size:13px;line-height:1.7;color:var(--fg2);}
+.plano-result ul,.plano-result ol{padding-left:18px;margin:6px 0;}
+.plano-result li{margin-bottom:5px;}
+
+/* ── PERFIL ── */
+.perfil-body{padding:28px 40px;flex:1;}
+.perfil-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:30px;box-shadow:var(--shadow);max-width:480px;}
+.perfil-card h2{font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:5px;}
+.perfil-card > p{font-size:12px;color:var(--fg2);margin-bottom:22px;}
+.perfil-avatar-big{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--accent);color:white;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;font-weight:700;margin-bottom:20px;
+}
+.form-checkbox{display:flex;align-items:center;gap:9px;font-size:14px;cursor:pointer;margin-top:4px;}
+.form-checkbox input{width:15px;height:15px;cursor:pointer;accent-color:var(--accent);}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;
+  background:#22543d;color:white;
+  padding:13px 18px;border-radius:10px;font-size:13px;font-weight:500;
+  box-shadow:0 4px 20px rgba(0,0,0,.25);
+  transform:translateY(80px);opacity:0;transition:all .3s;z-index:9999;
+}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.error{background:#742a2a;}
+
+/* ── MOBILE ── */
+.mobile-tabbar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--nav-bg);border-top:1px solid rgba(255,255,255,.08);padding-bottom:env(safe-area-inset-bottom,0px);z-index:100;}
+.mobile-tabs{display:flex;}
+.mobile-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;background:none;border:none;color:var(--fg3);font-size:10px;cursor:pointer;transition:color .15s;}
+.mobile-tab .icon{font-size:19px;}
+.mobile-tab.active{color:var(--nav-active);}
+
+.loading{display:flex;align-items:center;justify-content:center;padding:48px;}
+.spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:680px){
+  .app{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .mobile-tabbar{display:block;}
+  .main{padding-bottom:65px;}
+  .inicio-hero{padding:28px 16px 24px;}
+  .inicio-hero::before{display:none;}
+  .inicio-hero h2{font-size:22px;}
+  .inicio-body,.santo-body,.cat-body,.perfil-body{padding:18px 14px;}
+  .chat-msgs{padding:14px;}
+  .chat-input-area{padding:10px 14px 14px;}
+  .section-header{padding:14px 14px 0;}
+  .inicio-grid{grid-template-columns:1fr 1fr;}
+  .auth-box{padding:28px 20px;}
+}
+</style>
+
+<!-- ══ AUTH SCREEN ══════════════════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-cross"></div>
+      <div>
+        <h1>Assistente Católico</h1>
+        <span>Catecismo · Bíblia · Direito</span>
+      </div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Entrar</button>
+      <button class="auth-tab" onclick="switchAuthTab('cadastro')">Criar conta</button>
+    </div>
+
+    <!-- LOGIN -->
+    <form id="form-login" class="auth-form active" onsubmit="fazerLogin(event)">
+      <div>
+        <label>E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com" required autocomplete="email">
+      </div>
+      <div>
+        <label>Senha</label>
+        <input type="password" id="login-senha" placeholder="Sua senha" required autocomplete="current-password">
+      </div>
+      <div id="login-msg" style="display:none" class="auth-msg"></div>
+      <button type="submit" class="btn-auth" id="btn-login">Entrar →</button>
+      <div class="auth-divider">
+        <button type="button" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;" onclick="mostrarRecuperar()">Esqueci minha senha</button>
+      </div>
+    </form>
+
+    <!-- CADASTRO -->
+    <form id="form-cadastro" class="auth-form" onsubmit="fazerCadastro(event)">
+      <div>
+        <label>Nome completo</label>
+        <input type="text" id="cad-nome" placeholder="Seu nome" required autocomplete="name">
+      </div>
+      <div>
+        <label>E-mail</label>
+        <input type="email" id="cad-email" placeholder="seu@email.com" required autocomplete="email">
+      </div>
+      <div>
+        <label>Senha (mínimo 6 caracteres)</label>
+        <input type="password" id="cad-senha" placeholder="Crie uma senha" required minlength="6" autocomplete="new-password">
+      </div>
+      <div id="cad-msg" style="display:none" class="auth-msg"></div>
+      <button type="submit" class="btn-auth" id="btn-cad">Criar conta →</button>
+    </form>
+
+    <!-- RECUPERAR SENHA -->
+    <form id="form-recuperar" class="auth-form" onsubmit="recuperarSenha(event)">
+      <p style="font-size:13px;color:var(--fg2);margin-bottom:4px;">Digite seu e-mail e enviaremos um link para redefinir sua senha.</p>
+      <div>
+        <label>E-mail</label>
+        <input type="email" id="rec-email" placeholder="seu@email.com" required>
+      </div>
+      <div id="rec-msg" style="display:none" class="auth-msg"></div>
+      <button type="submit" class="btn-auth" id="btn-rec">Enviar link →</button>
+      <div class="auth-divider">
+        <button type="button" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;" onclick="switchAuthTab('login')">← Voltar ao login</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══ APP SCREEN ════════════════════════════════════════════════════ -->
+<div id="app-screen">
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sb-cross">
+        <div class="sb-cross-icon"></div>
+        <div>
+          <h1>Assistente Católico</h1>
+          <span>Catecismo · Bíblia · Direito</span>
+        </div>
+      </div>
+    </div>
+    <div class="user-info">
+      <div class="user-avatar" id="sb-avatar">?</div>
+      <div class="user-name" id="sb-nome">Carregando…</div>
+      <button class="btn-logout" onclick="fazerLogout()" title="Sair">⏻</button>
+    </div>
+    <nav>
+      <div class="nav-section">Menu</div>
+      <button class="nav-btn active" onclick="showPanel('inicio',this)"><span class="nav-icon">🏛️</span> Início</button>
+      <button class="nav-btn" onclick="showPanel('perguntas',this)"><span class="nav-icon">💬</span> Perguntas</button>
+      <button class="nav-btn" onclick="showPanel('santo',this)"><span class="nav-icon">✨</span> Santo do Dia</button>
+      <button class="nav-btn" onclick="showPanel('catequese',this)"><span class="nav-icon">📖</span> Catequese</button>
+      <button class="nav-btn" onclick="showPanel('perfil',this)"><span class="nav-icon">👤</span> Meu Perfil</button>
+    </nav>
+    <div class="sidebar-footer">Baseado no CIC, CDC<br>e Bíblia Ave Maria</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- INÍCIO -->
+    <section id="panel-inicio" class="panel active">
+      <div class="inicio-hero">
+        <div class="hero-badge">São Josemaría Escrivá</div>
+        <h2>Caminho — Frases para a vida cristã</h2>
+        <p>Reflexões do fundador do Opus Dei para fortalecer sua fé no cotidiano.</p>
+      </div>
+      <div class="inicio-body">
+        <div class="frase-card">
+          <div class="frase-num" id="frase-num">Ponto 1</div>
+          <div class="frase-txt" id="frase-txt">Não deixe que a sua vida seja estéril. Seja útil. Deixe rastro. Ilumine, com a chama da sua fé e do seu amor, os caminhos que você percorreu.</div>
+          <div class="frase-nav">
+            <button onclick="fraseAnterior()">← Anterior</button>
+            <span class="frase-count" id="frase-count">1 / 12</span>
+            <button onclick="frasePróxima()">Próxima →</button>
+          </div>
+        </div>
+        <h3 style="font-family:var(--font-d);font-size:16px;font-weight:700;margin-bottom:12px;">Explore o Assistente</h3>
+        <div class="inicio-grid">
+          <div class="inicio-card" onclick="showPanel('perguntas',null)">
+            <div class="ic">💬</div><h3>Perguntas</h3><p>Dúvidas sobre fé e doutrina</p>
+          </div>
+          <div class="inicio-card" onclick="showPanel('santo',null)">
+            <div class="ic">🕊️</div><h3>Santo do Dia</h3><p>Conheça o santo de hoje</p>
+          </div>
+          <div class="inicio-card" onclick="showPanel('catequese',null)">
+            <div class="ic">📖</div><h3>Catequese</h3><p>Gere roteiros personalizados</p>
+          </div>
+          <div class="inicio-card" onclick="showPanel('perfil',null)">
+            <div class="ic">👤</div><h3>Meu Perfil</h3><p>Edite seus dados</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PERGUNTAS -->
+    <section id="panel-perguntas" class="panel">
+      <div class="chat-wrap">
+        <div class="chat-header">
+          <h2>Perguntas sobre a Fé</h2>
+          <p>Baseado no CIC, Código de Direito Canônico e Bíblia Ave Maria</p>
+        </div>
+        <div class="chat-msgs" id="chat-msgs">
+          <div class="msg assistant">
+            <div class="msg-avatar">✝</div>
+            <div class="msg-bubble">
+              <strong>Bem-vindo ao Assistente Católico!</strong><br><br>
+              Faça sua pergunta sobre doutrina, sacramentos, moral ou vida espiritual.
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="chat-hints">
+            <span class="hint-chip" onclick="usarSugestao(this)">O que é a Eucaristia?</span>
+            <span class="hint-chip" onclick="usarSugestao(this)">Quais são os sacramentos?</span>
+            <span class="hint-chip" onclick="usarSugestao(this)">O que diz o CIC sobre o casamento?</span>
+            <span class="hint-chip" onclick="usarSugestao(this)">Explique a Santíssima Trindade</span>
+          </div>
+          <div class="chat-input-row">
+            <textarea class="chat-input" id="chat-input" rows="1" placeholder="Faça sua pergunta…"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarPergunta()}"
+              oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+            <button class="chat-send" id="btn-send" onclick="enviarPergunta()">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SANTO -->
+    <section id="panel-santo" class="panel">
+      <div class="section-header"><h2>Santo do Dia</h2><p>Conheça o santo que a Igreja celebra hoje</p></div>
+      <div class="santo-body">
+        <div id="santo-loading" class="loading"><div class="spinner"></div></div>
+        <div id="santo-content" style="display:none">
+          <div class="santo-card">
+            <div class="santo-top">
+              <div class="santo-date" id="santo-data"></div>
+              <div class="santo-name" id="santo-nome"></div>
+              <div class="santo-sub" id="santo-sub"></div>
+            </div>
+            <div class="santo-content">
+              <div class="santo-sec"><h3>Vida e Testemunho</h3><p id="santo-vida"></p></div>
+              <div class="santo-sec"><h3>Oração</h3><div class="oracao" id="santo-oracao"></div></div>
+            </div>
+          </div>
+          <button class="btn-refresh" onclick="carregarSanto()">↻ Atualizar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATEQUESE -->
+    <section id="panel-catequese" class="panel">
+      <div class="section-header"><h2>Plano de Catequese</h2><p>Gere roteiros personalizados</p></div>
+      <div class="cat-body">
+        <div class="form-card">
+          <h3>Gerar Plano</h3>
+          <p>Preencha para criar um plano completo</p>
+          <div class="form-row">
+            <label>Tema / Tópico</label>
+            <input type="text" id="cat-tema" placeholder="Ex: Os Sacramentos, A Trindade…">
+          </div>
+          <div class="form-row">
+            <label>Faixa etária</label>
+            <select id="cat-faixa">
+              <option value="crianças (6-9 anos)">Crianças (6–9 anos)</option>
+              <option value="pré-adolescentes (10-12 anos)">Pré-adolescentes (10–12 anos)</option>
+              <option value="adolescentes (13-17 anos)" selected>Adolescentes (13–17 anos)</option>
+              <option value="adultos">Adultos</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Número de aulas</label>
+            <input type="number" id="cat-aulas" value="4" min="1" max="12">
+          </div>
+          <button class="btn-primary" id="btn-cat" onclick="gerarCatequese()">📋 Gerar Plano</button>
+        </div>
+        <div id="plano-resultado" style="display:none"></div>
+      </div>
+    </section>
+
+    <!-- PERFIL -->
+    <section id="panel-perfil" class="panel">
+      <div class="section-header"><h2>Meu Perfil</h2><p>Edite seus dados e preferências</p></div>
+      <div class="perfil-body">
+        <div class="perfil-card">
+          <div class="perfil-avatar-big" id="perfil-avatar">?</div>
+          <h2>Minha Conta</h2>
+          <p id="perfil-email-label" style="margin-bottom:22px;"></p>
+          <form onsubmit="salvarPerfil(event)">
+            <div class="form-row">
+              <label>Nome completo</label>
+              <input type="text" id="perfil-nome" placeholder="Seu nome">
+            </div>
+            <div class="form-row">
+              <label>Paróquia (opcional)</label>
+              <input type="text" id="perfil-paroquia" placeholder="Nome da sua paróquia">
+            </div>
+            <div class="form-row">
+              <label class="form-checkbox">
+                <input type="checkbox" id="perfil-lembretes" checked>
+                Receber lembretes espirituais
+              </label>
+            </div>
+            <button type="submit" class="btn-primary" id="btn-perfil" style="margin-top:12px;width:100%">💾 Salvar alterações</button>
+          </form>
+          <hr style="border:none;border-top:1px solid var(--border);margin:24px 0 18px;">
+          <button onclick="fazerLogout()" style="width:100%;padding:10px;background:none;border:1.5px solid var(--border);border-radius:8px;color:var(--fg2);font-family:var(--font-b);font-size:13px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='#e57373';this.style.color='#e57373'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--fg2)'">⏻ Sair da conta</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MOBILE TABBAR -->
+<div class="mobile-tabbar">
+  <div class="mobile-tabs">
+    <button class="mobile-tab active" onclick="showPanel('inicio',null)"><span class="icon">🏛️</span><span>Início</span></button>
+    <button class="mobile-tab" onclick="showPanel('perguntas',null)"><span class="icon">💬</span><span>Chat</span></button>
+    <button class="mobile-tab" onclick="showPanel('santo',null)"><span class="icon">✨</span><span>Santo</span></button>
+    <button class="mobile-tab" onclick="showPanel('catequese',null)"><span class="icon">📖</span><span>Catequese</span></button>
+    <button class="mobile-tab" onclick="showPanel('perfil',null)"><span class="icon">👤</span><span>Perfil</span></button>
+  </div>
+</div>
+</div><!-- /app-screen -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── SUPABASE ────────────────────────────────────────────────────────
+const { createClient } = supabase;
+const supa = createClient(
+  'https://jqqojiuwkuyvjctsehbw.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxcW9qaXV3a3V5dmpjdHNlaGJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMDM5MTEsImV4cCI6MjEwNjg3OTkxMX0.eAliULbqIPo_LIUj_9ct_iEZHPQd9KRhDUKRbz5CJ0A'
+);
+
+// ─── AUTH TABS ───────────────────────────────────────────────────────
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((b,i) => {
+    b.classList.toggle('active', ['login','cadastro','recuperar'][i] === tab);
+  });
+  document.getElementById('form-login').classList.toggle('active', tab==='login');
+  document.getElementById('form-cadastro').classList.toggle('active', tab==='cadastro');
+  document.getElementById('form-recuperar').classList.toggle('active', tab==='recuperar');
+  // mostrar só 2 abas visíveis
+  document.querySelectorAll('.auth-tab')[2] && (document.querySelectorAll('.auth-tab')[2].style.display = tab==='recuperar' ? 'block':'none');
+}
+
+function mostrarRecuperar() {
+  document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('form-login').classList.remove('active');
+  document.getElementById('form-cadastro').classList.remove('active');
+  document.getElementById('form-recuperar').classList.add('active');
+}
+
+// ─── LOGIN ───────────────────────────────────────────────────────────
+async function fazerLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btn-login');
+  const msg = document.getElementById('login-msg');
+  btn.disabled = true; btn.textContent = '⏳ Entrando…';
+  msg.style.display = 'none';
+
+  const { error } = await supa.auth.signInWithPassword({
+    email: document.getElementById('login-email').value.trim(),
+    password: document.getElementById('login-senha').value,
+  });
+
+  if (error) {
+    msg.style.display = 'block';
+    msg.className = 'auth-msg error';
+    if (error.message.includes('Invalid login')) msg.textContent = 'E-mail ou senha incorretos.';
+    else if (error.message.includes('Email not confirmed')) msg.textContent = 'Confirme seu e-mail antes de entrar.';
+    else msg.textContent = error.message;
+    btn.disabled = false; btn.textContent = 'Entrar →';
+  }
+  // Se ok, onAuthStateChange cuida do resto
+}
+
+// ─── CADASTRO ────────────────────────────────────────────────────────
+async function fazerCadastro(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btn-cad');
+  const msg = document.getElementById('cad-msg');
+  btn.disabled = true; btn.textContent = '⏳ Criando conta…';
+  msg.style.display = 'none';
+
+  const nome = document.getElementById('cad-nome').value.trim();
+  const email = document.getElementById('cad-email').value.trim();
+  const senha = document.getElementById('cad-senha').value;
+
+  const { error } = await supa.auth.signUp({
+    email, password: senha,
+    options: { data: { nome } }
+  });
+
+  if (error) {
+    msg.style.display = 'block';
+    msg.className = 'auth-msg error';
+    if (error.message.includes('already registered')) msg.textContent = 'Este e-mail já está cadastrado.';
+    else msg.textContent = error.message;
+  } else {
+    msg.style.display = 'block';
+    msg.className = 'auth-msg success';
+    msg.textContent = '✅ Conta criada! Verifique seu e-mail para confirmar o cadastro.';
+  }
+  btn.disabled = false; btn.textContent = 'Criar conta →';
+}
+
+// ─── RECUPERAR SENHA ─────────────────────────────────────────────────
+async function recuperarSenha(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btn-rec');
+  const msg = document.getElementById('rec-msg');
+  btn.disabled = true; btn.textContent = '⏳ Enviando…';
+
+  const { error } = await supa.auth.resetPasswordForEmail(
+    document.getElementById('rec-email').value.trim()
+  );
+
+  msg.style.display = 'block';
+  if (error) {
+    msg.className = 'auth-msg error';
+    msg.textContent = error.message;
+  } else {
+    msg.className = 'auth-msg success';
+    msg.textContent = '✅ Link enviado! Verifique seu e-mail.';
+  }
+  btn.disabled = false; btn.textContent = 'Enviar link →';
+}
+
+// ─── LOGOUT ──────────────────────────────────────────────────────────
+async function fazerLogout() {
+  await supa.auth.signOut();
+}
+
+// ─── AUTH STATE ──────────────────────────────────────────────────────
+let usuarioAtual = null;
+
+supa.auth.onAuthStateChange(async (event, session) => {
+  if (session?.user) {
+    usuarioAtual = session.user;
+    await carregarPerfil(session.user);
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app-screen').style.display = 'block';
+    if (!santoCarregado) carregarSanto();
+  } else {
+    usuarioAtual = null;
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('app-screen').style.display = 'none';
+  }
+});
+
+// Verificar sessão existente ao carregar
+supa.auth.getSession().then(({ data: { session } }) => {
+  if (!session) {
+    document.getElementById('auth-screen').style.display = 'flex';
+  }
+});
+
+// ─── PERFIL ──────────────────────────────────────────────────────────
+async function carregarPerfil(user) {
+  const { data } = await supa.from('profiles').select('*').eq('id', user.id).single();
+  const nome = data?.nome || user.user_metadata?.nome || user.email.split('@')[0];
+  const inicial = nome.charAt(0).toUpperCase();
+
+  document.getElementById('sb-avatar').textContent = inicial;
+  document.getElementById('sb-nome').textContent = nome;
+  document.getElementById('perfil-avatar').textContent = inicial;
+  document.getElementById('perfil-email-label').textContent = user.email;
+  document.getElementById('perfil-nome').value = nome;
+  document.getElementById('perfil-paroquia').value = data?.paroquia || '';
+  document.getElementById('perfil-lembretes').checked = data?.lembretes !== false;
+}
+
+async function salvarPerfil(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btn-perfil');
+  btn.disabled = true; btn.textContent = '⏳ Salvando…';
+
+  const dados = {
+    id: usuarioAtual.id,
+    nome: document.getElementById('perfil-nome').value.trim(),
+    paroquia: document.getElementById('perfil-paroquia').value.trim() || null,
+    lembretes: document.getElementById('perfil-lembretes').checked,
+  };
+
+  const { error } = await supa.from('profiles').upsert(dados);
+  if (error) mostrarToast('Erro ao salvar: ' + error.message, true);
+  else {
+    mostrarToast('✅ Perfil atualizado com sucesso!');
+    await carregarPerfil(usuarioAtual);
+  }
+  btn.disabled = false; btn.textContent = '💾 Salvar alterações';
+}
+
+// ─── NAVEGAÇÃO ───────────────────────────────────────────────────────
+let santoCarregado = false;
+
+function showPanel(nome, btnEl) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+nome).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  else {
+    const idx = ['inicio','perguntas','santo','catequese','perfil'].indexOf(nome);
+    document.querySelectorAll('.nav-btn')[idx]?.classList.add('active');
+  }
+  document.querySelectorAll('.mobile-tab').forEach(b => b.classList.remove('active'));
+  const idx2 = ['inicio','perguntas','santo','catequese','perfil'].indexOf(nome);
+  document.querySelectorAll('.mobile-tab')[idx2]?.classList.add('active');
+  if (nome==='santo' && !santoCarregado) carregarSanto();
+}
+
+// ─── FRASES ──────────────────────────────────────────────────────────
+const frases = [
+  {num:1,  txt:'Não deixe que a sua vida seja estéril. Seja útil. Deixe rastro. Ilumine, com a chama da sua fé e do seu amor, os caminhos que você percorreu.'},
+  {num:2,  txt:'Não te inquietes. Não te preocupes. O que te falta em oração, completa com humildade.'},
+  {num:58, txt:'Confiar: assim, com essa aparente irresponsabilidade de uma criança, devia ser a tua oração. Pede, pede muito, com insistência. Deus é Pai!'},
+  {num:111,txt:'A oração é a arma mais eficaz contra nossos inimigos: a carne, o demônio e o mundo.'},
+  {num:149,txt:'Não digas: "Esse homem me irrita!" Pensa: "Esse homem me santifica."'},
+  {num:204,txt:'Convicção: a preguiça é mãe de todos os vícios. E, para nós os cristãos, é ainda pior: é grande pecado, pois tornamo-nos inúteis ao amor.'},
+  {num:302,txt:'Os fracassos — o próprio, o alheio — não devem perturbar-te. Deus permite as quedas para que humildemente reconheças a tua fraqueza, e te faça maior em graça.'},
+  {num:418,txt:'Sede santos na rua, no escritório, na oficina, no campo, na universidade. Sede santos sendo ordinários, no cumprimento do dever de cada dia.'},
+  {num:540,txt:'Quando sentes o peso do cansaço, descobre no horizonte do teu trabalho a meta sobrenatural: o amor de Deus e a felicidade eterna.'},
+  {num:703,txt:'Nossa Mãe do Céu há de dar-te o amor de Deus que tanto necessitas para cumprir a tua missão.'},
+  {num:999,txt:'Quando a tentação te pressionar com força, pensa: o que faz o Senhor comigo? Está me provando... e torna a ti com amor mais puro.'},
+  {num:472,txt:'Seja leal: se determinado caminho te fez mal, não o imponhas aos outros.'},
+];
+let fraseIdx = 0;
+function renderFrase() {
+  const f = frases[fraseIdx];
+  document.getElementById('frase-num').textContent = 'Ponto '+f.num;
+  document.getElementById('frase-txt').textContent = f.txt;
+  document.getElementById('frase-count').textContent = (fraseIdx+1)+' / '+frases.length;
+}
+function frasePróxima(){fraseIdx=(fraseIdx+1)%frases.length;renderFrase();}
+function fraseAnterior(){fraseIdx=(fraseIdx-1+frases.length)%frases.length;renderFrase();}
+renderFrase();
+
+// ─── CHAT ────────────────────────────────────────────────────────────
+async function enviarPergunta() {
+  const input = document.getElementById('chat-input');
+  const texto = input.value.trim();
+  if (!texto) return;
+  adicionarMsg('user', texto);
+  input.value = ''; input.style.height = 'auto';
+  document.getElementById('btn-send').disabled = true;
+  const typing = adicionarTyping();
+  await new Promise(r => setTimeout(r, 1400));
+  typing.remove();
+  adicionarMsg('assistant', gerarRespostaLocal(texto));
+  // log
+  try { await supa.from('perguntas_log').insert({pergunta:texto,resposta:'simulada'}); } catch(e){}
+  document.getElementById('btn-send').disabled = false;
+}
+function adicionarMsg(role, texto) {
+  const msgs = document.getElementById('chat-msgs');
+  const div = document.createElement('div');
+  div.className = 'msg '+role;
+  div.innerHTML = `<div class="msg-avatar">${role==='assistant'?'✝':'👤'}</div><div class="msg-bubble">${marked.parse?marked.parse(texto):texto}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function adicionarTyping() {
+  const msgs = document.getElementById('chat-msgs');
+  const div = document.createElement('div');
+  div.className = 'msg assistant';
+  div.innerHTML = `<div class="msg-avatar">✝</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+function usarSugestao(el){document.getElementById('chat-input').value=el.textContent;enviarPergunta();}
+function gerarRespostaLocal(p) {
+  const q = p.toLowerCase();
+  if (q.includes('eucaristia')||q.includes('comunhão'))
+    return '**A Eucaristia** é o mais augusto dos sete sacramentos (CIC §1324). O pão e o vinho se convertem no Corpo e Sangue de Cristo — doutrina da **transubstanciação** (CIC §1376), definida pelo Concílio de Trento (1551). Para receber dignamente: estar em graça, guardar o jejum de 1 hora, ser batizado e crismado.';
+  if (q.includes('sacramentos'))
+    return '**Os sete sacramentos** (CIC §1113):\n1. **Batismo** — porta de entrada\n2. **Confirmação** — robustece a graça\n3. **Eucaristia** — fonte e cume\n4. **Penitência** — reconciliação\n5. **Unção dos Enfermos** — graça na doença\n6. **Ordem** — ministros sagrados\n7. **Matrimônio** — aliança conjugal\n\nOs três primeiros formam os **Sacramentos de Iniciação**.';
+  if (q.includes('trindade'))
+    return '**A Santíssima Trindade** é o mistério central da fé cristã (CIC §234): um só Deus em três Pessoas — Pai, Filho e Espírito Santo — distintas e coiguais. O Concílio de Niceia (325) definiu o Filho como *consubstancial* ao Pai. *"Deus é amor"* (1 Jo 4,8).';
+  return 'Para respostas completas baseadas no CIC, CDC e Bíblia Ave Maria, configure o backend com a chave da API Anthropic. Pesquise também em [Vatican.va](https://www.vatican.va) e no site da CNBB.';
+}
+
+// ─── SANTO ───────────────────────────────────────────────────────────
+const santos = [
+  {nome:'São Francisco de Assis',sub:'Fundador Franciscano · 4 de outubro',vida:'Francisco Bernardone (1181–1226) nasceu em Assis, abraçou a pobreza radical e fundou a Ordem dos Frades Menores (1209). Recebeu os estigmas em 1224. Seu "Cântico das Criaturas" é o texto mais antigo em italiano.',oracao:'Senhor, fazei-me instrumento da vossa paz. Onde houver ódio, que eu leve o amor; onde houver ofensa, que eu leve o perdão. Amém.'},
+  {nome:'Nossa Senhora de Fátima',sub:'Aparições de 1917 · 13 de maio',vida:'Entre maio e outubro de 1917, Nossa Senhora apareceu seis vezes em Fátima. Pediu oração, penitência e o Rosário diário. O milagre do sol foi testemunhado por 70.000 pessoas.',oracao:'Ó minha Jesus, perdoai-nos, livrai-nos do fogo do inferno. Levai as almas para o céu, especialmente as mais necessitadas da vossa misericórdia. Amém.'},
+  {nome:'Santo Tomás de Aquino',sub:'Doutor da Igreja · 28 de janeiro',vida:'Tomás de Aquino (1225–1274), dominicano, autor da Summa Theologiae — síntese de teologia e filosofia aristotélica. Canonizado em 1323.',oracao:'Criador de todas as coisas, dai-me uma mente que vos possa conhecer, um coração que vos ame. Amém.'},
+  {nome:'Santa Teresa do Menino Jesus',sub:'Doutora da Igreja · 1º de outubro',vida:'Thérèse Martin (1873–1897) descobriu o "Pequeno Caminho" da infância espiritual. Sua autobiografia "História de uma Alma" é um dos livros mais lidos do século XX.',oracao:'Ó Santa Teresa, que nunca te cansastes de invocar o Senhor, intercedei por nós. Amém.'},
+];
+async function carregarSanto() {
+  document.getElementById('santo-loading').style.display='flex';
+  document.getElementById('santo-content').style.display='none';
+  await new Promise(r=>setTimeout(r,700));
+  const s = santos[new Date().getDate()%santos.length];
+  const meses=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const d = new Date();
+  document.getElementById('santo-data').textContent=`${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+  document.getElementById('santo-nome').textContent=s.nome;
+  document.getElementById('santo-sub').textContent=s.sub;
+  document.getElementById('santo-vida').textContent=s.vida;
+  document.getElementById('santo-oracao').textContent=s.oracao;
+  document.getElementById('santo-loading').style.display='none';
+  document.getElementById('santo-content').style.display='block';
+  santoCarregado=true;
+}
+
+// ─── CATEQUESE ───────────────────────────────────────────────────────
+async function gerarCatequese() {
+  const tema=document.getElementById('cat-tema').value.trim();
+  if(!tema){mostrarToast('Informe um tema.',true);return;}
+  const btn=document.getElementById('btn-cat');
+  btn.disabled=true;btn.textContent='⏳ Gerando…';
+  const div=document.getElementById('plano-resultado');
+  div.style.display='block';div.innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  const faixa=document.getElementById('cat-faixa').value;
+  const aulas=document.getElementById('cat-aulas').value;
+  await new Promise(r=>setTimeout(r,1000));
+  const plano=`## Plano de Catequese: ${tema}\n\n**Público:** ${faixa} · **${aulas} aula(s)**\n\n---\n\n### Objetivo Geral\nLevar os catequizandos a compreender **${tema}** à luz do CIC e da Sagrada Escritura.\n\n${Array.from({length:parseInt(aulas)},(_,i)=>`#### Aula ${i+1}\n\n**Abertura (10 min)** — Oração e acolhida.\n\n**Desenvolvimento (30 min)** — VER · JULGAR · AGIR.\n\n**Encerramento (10 min)** — Retomada e compromisso.`).join('\n\n---\n\n')}\n\n---\n\n### Recursos\n- Catecismo da Igreja Católica (CIC)\n- Bíblia Ave Maria\n- Catequese na Igreja de Hoje (CNBB)\n\n> *"Ide e ensinai a todas as nações"* (Mt 28,19)`;
+  div.innerHTML=`<div class="plano-result">${marked.parse?marked.parse(plano):plano}</div>`;
+  btn.disabled=false;btn.textContent='📋 Gerar Plano';
+}
+
+// ─── TOAST ───────────────────────────────────────────────────────────
+function mostrarToast(msg,erro=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(erro?' error':'');
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),4000);
+}
+</script>
+
+
+</body>
 </html>
